@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'widgets/homescreen.dart';
+import 'widgets/home_screen.dart';
 
 void main() {
   runApp(
@@ -25,7 +25,6 @@ class WaypointAlertApp extends StatelessWidget {
           primary: Colors.teal,
           secondary: Colors.blue,
           surface: const Color(0xFF1A1A2E),
-          background: const Color(0XFF0F0F1A),
         ),
         scaffoldBackgroundColor: const Color(0xFF0F0F1A),
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:waypoint_alert_app/widgets/first_run_settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
 	const HomeScreen({super.key});
@@ -10,7 +11,15 @@ class _HomeScreenState extends State<HomeScreen> {
 	// TODO: Replace with actual settings check
 	final bool isFirstRun = true;
 
-	@override Widget build(BuildContext context) {
+  @override Widget build(BuildContext context) {
+    if (isFirstRun) {
+      return const FirstRunSettingsScreen();
+    }
+
+    return _buildMainDashboard(context);
+  }
+
+	Widget _buildMainDashboard(BuildContext context) {
 		return Scaffold(
 			appBar: AppBar(
 				title: const Text('Waypoint Alert'),
@@ -29,14 +38,12 @@ class _HomeScreenState extends State<HomeScreen> {
 					mainAxisAlignment: MainAxisAlignment.center,
 					children: [
 						Text(
-							isFirstRun ? 'First Run' : 'Not First Run',
+							'Not First Run',
 							style: Theme.of(context).textTheme.headlineMedium,
 						),
 						const SizedBox(height: 16),
 						Text (
-							isFirstRun
-								? 'Settings verification needed'
-								: 'Waypoints loaded and ready',
+							'Waypoints loaded and ready',
 							style: Theme.of(context).textTheme.bodyLarge,
 						),
 					],
