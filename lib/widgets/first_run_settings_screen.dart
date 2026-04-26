@@ -1,20 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:waypoint_alert_app/models/app_settings.dart';
+import 'package:waypoint_alert_app/services/settings_service.dart';
 import 'package:waypoint_alert_app/widgets/cards/setting_card.dart';
+import 'package:waypoint_alert_app/constants/app_constants.dart';
 
 class FirstRunSettingsScreen extends StatefulWidget {
-  const FirstRunSettingsScreen({super.key});
+  final SettingsService settingsService;
+
+  const FirstRunSettingsScreen({super.key, required this.settingsService});
 
   @override State<FirstRunSettingsScreen> createState() => _FirstRunSettingScreenState();
 }
 
 class _FirstRunSettingScreenState extends State<FirstRunSettingsScreen> {
+
   // Default values
-  // TODO: pull from settings service (later)
-  int _checkIntervalSeconds = 60;
-  int _walkingSpeedMetersPerMinute = 150;
-  int _defaultAlertDistanceMeters = 300;
+  int? _checkIntervalSeconds;
+  int? _walkingSpeedMetersPerMinute;
+  int? _defaultAlertDistanceMeters;
 
   @override Widget build(BuildContext context) {
+    AppSettings appSettings = widget.settingsService.getSettings();
+
+    _checkIntervalSeconds = appSettings.gpsPingInterval;
+    _walkingSpeedMetersPerMinute = appSettings.walkingSpeedMpm;
+    _defaultAlertDistanceMeters = appSettings.defaultAlertDistanceM;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings Review'),
@@ -41,6 +52,7 @@ class _FirstRunSettingScreenState extends State<FirstRunSettingsScreen> {
 
             // Check Interval
             SettingCard (
+              key: Key(AppConstants.keyGpsPingInterval),
               title: 'GPS Check Interval (seconds)',
               value: '$_checkIntervalSeconds',
               subtitle: 'How often to check your location',
@@ -51,6 +63,7 @@ class _FirstRunSettingScreenState extends State<FirstRunSettingsScreen> {
 
             // Walking Speed
             SettingCard(
+              key: Key(AppConstants.keyWalkingSpeedMpm),
               title: 'Walking Speed (m/min)', 
               value: '$_walkingSpeedMetersPerMinute', 
               subtitle: 'Average walking speed. Used for dynamic check intervals', 
@@ -61,6 +74,7 @@ class _FirstRunSettingScreenState extends State<FirstRunSettingsScreen> {
 
             // Alert Distance
             SettingCard(
+              key: Key(AppConstants.keyDefaultAlertDistanceM),
               title: 'Default Alert Distance (meters)', 
               value: '$_defaultAlertDistanceMeters', 
               subtitle: 'Distance at which to trigger alerts', 

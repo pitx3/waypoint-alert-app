@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+//import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:waypoint_alert_app/services/settings_service.dart';
+import 'package:waypoint_alert_app/widgets/first_run_settings_screen.dart';
 
 import 'widgets/home_screen.dart';
 
-void main() {
-  runApp(
-    const ProviderScope(
-      child: WaypointAlertApp(),
-    ),
-  );
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final settingsService = await SettingsService.create();
+  runApp(WaypointAlertApp(settingsService: settingsService));
 }
 
 class WaypointAlertApp extends StatelessWidget {
-  const WaypointAlertApp({super.key});
+  final SettingsService settingsService;
+
+  const WaypointAlertApp({super.key, required this.settingsService});
 
   @override Widget build (BuildContext context) {
     return MaterialApp(
@@ -29,7 +31,14 @@ class WaypointAlertApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFF0F0F1A),
       ),
 
-      home: const HomeScreen(),
+      home: _buildHome(settingsService),
     );
+  }
+
+  Widget _buildHome(SettingsService settingsService) {
+    if (settingsService.isFirstRun) {
+      return FirstRunSettingsScreen(settingsService: settingsService);
+    }
+    return HomeScreen(settingsService: settingsService);
   }
 }

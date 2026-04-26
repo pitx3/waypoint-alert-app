@@ -9,6 +9,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp (
         home: SettingCard(
+          key: Key('test_setting_card'),
           title: 'Test Title',
           value: 'Test Value',
           subtitle: 'Test Subtitle',
@@ -17,8 +18,9 @@ void main() {
       ),
     );
 
-    expect(find.text('Test Tittle'), findsOneWidget, reason: 'Test Title not found');
-    expect(find.text('Test Valuue'), findsOneWidget, reason: 'Test Value not found');
+    expect(find.byKey(Key('test_setting_card')), findsOneWidget, reason: 'Test Card key not found');
+    expect(find.text('Test Title'), findsOneWidget, reason: 'Test Title not found');
+    expect(find.text('Test Value'), findsOneWidget, reason: 'Test Value not found');
     expect(find.text('Test Subtitle'), findsOneWidget, reason: 'Test Subtitle not found');
     expect(find.byIcon(Icons.edit), findsOneWidget, reason: 'Icon "Icons.edit" not found');
 
