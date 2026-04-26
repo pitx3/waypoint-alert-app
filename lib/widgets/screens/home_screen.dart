@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:waypoint_alert_app/constants/app_constants.dart';
 import 'package:waypoint_alert_app/services/settings_service.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -33,6 +34,13 @@ class _HomeScreenState extends State<HomeScreen> {
 							'Waypoints loaded and ready',
 							style: Theme.of(context).textTheme.bodyLarge,
 						),
+            // if (AppConstants.debugResetFirstRun) {
+            //   ElevatedButton(
+            //     onPressed: () {},
+            //     child: const Text('[DEBUG] Reset First Run'),
+            //   ),
+            // },
+
 					],
 				),
 			),

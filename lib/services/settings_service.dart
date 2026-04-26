@@ -39,4 +39,9 @@ class SettingsService {
 
   bool get isFirstRun => !prefs.containsKey(AppConstants.keyHasCompletedFirstRun);
   
+  Future<void> resetFirstRunForDebug() async {
+    if (AppConstants.debugResetFirstRun) {
+      await prefs.remove(AppConstants.keyHasCompletedFirstRun);
+    }
+  }
 }
