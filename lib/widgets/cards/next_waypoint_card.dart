@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 class NextWaypointCard extends StatelessWidget {
   final String name;
   final double distanceKm;
-  final double bearing;
+  final double? bearing;
 
   const NextWaypointCard({
     super.key,
     required this.name,
     required this.distanceKm,
-    required this.bearing,
+    this.bearing,
   });
 
   @override
@@ -73,7 +73,7 @@ class NextWaypointCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        '${bearing.toStringAsFixed(0)}°',
+                        (bearing == null) ? '--' : '${bearing!.toStringAsFixed(0)}°',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 12,

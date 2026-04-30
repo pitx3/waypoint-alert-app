@@ -33,11 +33,19 @@ class SettingsService {
     await prefs.setInt(AppConstants.keyDefaultAlertDistanceM, meters);
   }
 
+  bool get isFirstRun => !prefs.containsKey(AppConstants.keyHasCompletedFirstRun);
   Future<void> setFirstRunComplete() async {
     await prefs.setBool(AppConstants.keyHasCompletedFirstRun, true);
   }
 
-  bool get isFirstRun => !prefs.containsKey(AppConstants.keyHasCompletedFirstRun);
+  Future<int?> getActiveSetId() async => prefs.getInt(AppConstants.keyActiveSetId);
+  Future<void> setActiveSetId(int? id) async {
+    if (id == null) {
+      await prefs.remove(AppConstants.keyActiveSetId);
+    } else {
+      await prefs.setInt(AppConstants.keyActiveSetId, id);
+    }
+  }
   
   Future<void> resetFirstRunForDebug() async {
     if (AppConstants.debugResetFirstRun) {

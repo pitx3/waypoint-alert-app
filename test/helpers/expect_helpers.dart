@@ -49,6 +49,14 @@ void expectFalse(bool value, {String? reason}) {
   );
 }
 
+void expectNull(dynamic value, {String? reason}) {
+  expect(
+    value,
+    isNull,
+    reason: reason ?? 'Expected "null" got "$value"',
+  );
+}
+
 void expectKeyName(String keyName, {String? reason}) {
   expect(
     find.byKey(Key(keyName)),

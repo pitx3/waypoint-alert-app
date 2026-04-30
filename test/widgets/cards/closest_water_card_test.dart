@@ -19,15 +19,31 @@ Widget _buildScaffold({String? waterName, double? distanceKm, double? bearing}) 
 
 void main() {
   group('ClosestWaterCard', () {
-    testWidgets('displays water name and distance when available', (tester) async {
+    testWidgets('displays water name, distance, and bearing when available', (tester) async {
       String waterName = 'Clear Creek Crossing';
       double distanceKm = 2.7;
-      //double bearing = 112;
+      double bearing = 112;
+      await tester.pumpWidget(_buildScaffold(waterName: waterName, distanceKm: distanceKm, bearing: bearing));
+
+      expectText('CLOSEST WATER');
+      expectText(waterName);
+      expectText('${distanceKm.toStringAsFixed(1)} km away');
+      expectText('${bearing.toStringAsFixed(0)}°');
+      expectIcon(Icons.water_drop);
+    });
+
+    testWidgets('displays "--" when bearing unavailable', (tester) async {
+      String waterName = 'Clear Creek Crossing';
+      double distanceKm = 2.7;
+      double bearing = 0.0;
+      // deliberately do NOT pass bearing into the scaffold call
       await tester.pumpWidget(_buildScaffold(waterName: waterName, distanceKm: distanceKm));
 
       expectText('CLOSEST WATER');
       expectText(waterName);
       expectText('${distanceKm.toStringAsFixed(1)} km away');
+      expectText('--');
+      expectTextNotFound('${bearing.toStringAsFixed(0)}°');
       expectIcon(Icons.water_drop);
     });
 

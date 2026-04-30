@@ -4,7 +4,7 @@ import 'package:waypoint_alert_app/widgets/cards/next_waypoint_card.dart';
 
 import '../../helpers/expect_helpers.dart';
 
-Widget _buildScaffold(String name, double distanceKm, double bearing) {
+Widget _buildScaffold(String name, double distanceKm, {double? bearing}) {
   return MaterialApp(
     home: Scaffold(
       body: NextWaypointCard(name: name, distanceKm: distanceKm, bearing: bearing),
@@ -19,7 +19,7 @@ void main() {
       String name = 'Sargents Ridge';
       double distanceKm = 0.8;
       double bearing = 74;
-      await tester.pumpWidget(_buildScaffold(name, distanceKm, bearing));
+      await tester.pumpWidget(_buildScaffold(name, distanceKm, bearing: bearing));
 
       expectText('NEXT WAYPOINT');
       expectText(name);
@@ -27,6 +27,21 @@ void main() {
       expectText('${bearing.toStringAsFixed(0)}°');
       expectIcon(Icons.explore, reason: 'Could not find bearing badge');
     });
+
+    testWidgets('displays "--" if bearing not passed', (tester) async {
+      String name = 'Sargents Ridge';
+      double distanceKm = 0.8;
+      double bearing = 74;
+      await tester.pumpWidget(_buildScaffold(name, distanceKm));
+
+      expectText('NEXT WAYPOINT');
+      expectText(name);
+      expectText('${distanceKm.toStringAsFixed(1)} km away');
+      expectText('--');
+      expectTextNotFound('${bearing.toStringAsFixed(0)}°');
+      expectIcon(Icons.explore, reason: 'Could not find bearing badge');
+    });
+
 
   });
 }

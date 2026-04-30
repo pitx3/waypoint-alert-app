@@ -60,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () => _showHamburgerMenu(context),
                     ),
                     const SizedBox(height: 16),
-                    NextWaypointCard(name: 'Next Waypoint!', distanceKm: 0.8, bearing: 74),
+                    NextWaypointCard(name: 'Next Waypoint!', distanceKm: 0.8, bearing: null),
                     const SizedBox(height: 16),
                     const ClosestWaterCard(
                       waterName: 'Clear Creek Crossing',

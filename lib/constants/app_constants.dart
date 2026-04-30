@@ -8,6 +8,7 @@ class AppConstants {
   static const String keyWalkingSpeedMpm = 'walking_speed_mpm';
   static const String keyDefaultAlertDistanceM = 'default_alert_distance_m';
   static const String keyHasCompletedFirstRun = 'has_completed_first_run';
+  static const String keyActiveSetId = 'active_set_id';
 
   // Default values
   static const int defaultGpsPingInterval = 300;

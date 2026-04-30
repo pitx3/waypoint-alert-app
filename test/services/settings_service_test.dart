@@ -4,6 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:waypoint_alert_app/services/settings_service.dart';
 import 'package:waypoint_alert_app/constants/app_constants.dart';
 
+import '../helpers/expect_helpers.dart';
+
 class MockSharedPreferences extends Mock implements SharedPreferences {}
 
 void main() {
@@ -86,6 +88,43 @@ void main() {
       when(() => mockPrefs.containsKey(AppConstants.keyHasCompletedFirstRun)).thenReturn(true);
       expect(settingsService.isFirstRun, false);
     });
+  });
+
+  group('activeSetId', () {
+    test('getActiveSetId returns null when not set', () async {
+      when(() => mockPrefs.getInt(AppConstants.keyActiveSetId)).thenReturn(null);
+
+      final result = await settingsService.getActiveSetId();
+
+      expectNull(result, reason: 'ActiveSetId should be null when not set.');
+    });
+
+    test('getActiveSetId returns stored value', () async {
+      when(() => mockPrefs.getInt(AppConstants.keyActiveSetId)).thenReturn(42);
+
+      final result = await settingsService.getActiveSetId();
+
+      expect(result, 42, reason: 'Should return stored active set ID');
+    });
+
+    test('setActveSetId stored value', () async {
+      when(() => mockPrefs.setInt(AppConstants.keyActiveSetId, 15))
+        .thenAnswer((_) async => true);
+
+      await settingsService.setActiveSetId(15);
+
+      verify(() => mockPrefs.setInt(AppConstants.keyActiveSetId, 15)).called(1);
+    });
+  
+    test('setActiveSetId removes key when null', () async {
+      when(() => mockPrefs.remove(AppConstants.keyActiveSetId))
+        .thenAnswer((_) async => true);
+
+      await settingsService.setActiveSetId(null);
+
+      verify(() => mockPrefs.remove(AppConstants.keyActiveSetId)).called(1);
+    });
+
   });
 
 }
