@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:waypoint_alert_app/widgets/cards/setting_card.dart';
 
+import '../../helpers/expect_helpers.dart';
+
 void main() {
   testWidgets('SettingCard displays title, value, and subtitle', (tester) async{
 
@@ -18,12 +20,10 @@ void main() {
       ),
     );
 
-    expect(find.byKey(Key('test_setting_card')), findsOneWidget, reason: 'Test Card key not found');
-    expect(find.text('Test Title'), findsOneWidget, reason: 'Test Title not found');
-    expect(find.text('Test Value'), findsOneWidget, reason: 'Test Value not found');
-    expect(find.text('Test Subtitle'), findsOneWidget, reason: 'Test Subtitle not found');
-    expect(find.byIcon(Icons.edit), findsOneWidget, reason: 'Icon "Icons.edit" not found');
-
+    expectKeyName('test_setting_card', reason: 'Test Card key not found');
+    expectText('Test Title');
+    expectText('Test Value');
+    expectText('Test Subtitle');
+    expectIcon(Icons.edit);
   });
-
 }

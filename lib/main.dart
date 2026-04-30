@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:waypoint_alert_app/constants/app_constants.dart';
 //import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:waypoint_alert_app/constants/app_constants.dart';
 import 'package:waypoint_alert_app/services/settings_service.dart';
 import 'package:waypoint_alert_app/widgets/screens/first_run_settings_screen.dart';
+import 'package:waypoint_alert_app/widgets/screens/home_screen.dart';
 
-import 'widgets/screens/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
