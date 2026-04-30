@@ -1,12 +1,17 @@
+import 'package:isar_community/isar.dart';
+
+part 'waypoint_set.g.dart';
+
+@collection
 class WaypointSet {
-  final int id;
-  final String name;
-  final DateTime created;
-  final bool isActive;
-  final String? description;
+  Id id = Isar.autoIncrement;
+  String name;
+  DateTime created;
+  bool isActive;
+  String? description;
 
   WaypointSet({
-    required this.id,
+    this.id = Isar.autoIncrement,
     required this.name,
     required this.created,
     required this.isActive,

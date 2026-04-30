@@ -1,9 +1,22 @@
+import 'package:isar_community/isar.dart';
+
+part 'waypoint.g.dart';
+
+@collection
 class Waypoint {
-  int id;
+  Id id = Isar.autoIncrement;
   int setId;
+
+  @Index()
   String name;
+
+  @Index()
   double latitude;
+
+  @Index()
   double longitude;
+
+  @Index()
   String type;
   String? notes;
   String? direction;
@@ -11,7 +24,7 @@ class Waypoint {
   List<Alert> alerts;
 
   Waypoint({
-    required this.id,
+    this.id = Isar.autoIncrement,
     required this.setId,
     required this.name,
     required this.latitude,
@@ -25,12 +38,13 @@ class Waypoint {
 
 }
 
+@embedded
 class Alert {
   int distanceMeters;
   String priority;
 
   Alert({
-    required this.distanceMeters,
+    this.distanceMeters = 500,
     this.priority = 'normal',
   });
 }

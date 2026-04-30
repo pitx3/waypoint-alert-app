@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 //import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:waypoint_alert_app/constants/app_constants.dart';
+import 'package:waypoint_alert_app/services/isar_service.dart';
 import 'package:waypoint_alert_app/services/settings_service.dart';
 import 'package:waypoint_alert_app/widgets/screens/first_run_settings_screen.dart';
 import 'package:waypoint_alert_app/widgets/screens/home_screen.dart';
@@ -9,14 +10,27 @@ import 'package:waypoint_alert_app/widgets/screens/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  final isarService = IsarService();
+  await isarService.init();
+  
   final settingsService = await SettingsService.create();
-  runApp(WaypointAlertApp(settingsService: settingsService));
+
+  runApp(WaypointAlertApp(
+    isarService: isarService,
+    settingsService: settingsService
+  ));
 }
 
 class WaypointAlertApp extends StatelessWidget {
+  final IsarService isarService;
   final SettingsService settingsService;
 
-  const WaypointAlertApp({super.key, required this.settingsService});
+  const WaypointAlertApp({
+    super.key,
+    required this.isarService,
+    required this.settingsService
+  });
 
   @override Widget build (BuildContext context) {
     return MaterialApp(
