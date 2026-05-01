@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:waypoint_alert_app/widgets/banners/monitoring_banner.dart';
 
-import '../../helpers/expect_helpers.dart';
+import '../../../helpers/expect_helpers.dart';
 
 Widget _buildScaffold(bool isMonitoring, {VoidCallback? onToggle}) {
   return MaterialApp(

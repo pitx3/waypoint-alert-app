@@ -17,4 +17,15 @@ class WaypointSet {
     required this.isActive,
     this.description,
   });
+
+  factory WaypointSet.fromJson(Map<String, dynamic> json) => WaypointSet(
+    id: json['id'] ?? Isar.autoIncrement,
+    name: json['name'],
+    created: json['created'] != null
+      ? DateTime.parse(json['created'])
+      : DateTime.now(),
+    isActive: json['isActive'] ?? false,
+    description: json['description'],
+  );
 }
+

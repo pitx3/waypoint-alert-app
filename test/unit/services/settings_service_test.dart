@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:waypoint_alert_app/services/settings_service.dart';
 import 'package:waypoint_alert_app/constants/app_constants.dart';
 
-import '../helpers/expect_helpers.dart';
+import '../../helpers/expect_helpers.dart';
 
 class MockSharedPreferences extends Mock implements SharedPreferences {}
 

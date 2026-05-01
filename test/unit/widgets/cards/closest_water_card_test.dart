@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:waypoint_alert_app/widgets/cards/closest_water_card.dart';
 
-import '../../helpers/expect_helpers.dart';
+import '../../../helpers/expect_helpers.dart';
 
 Widget _buildScaffold({String? waterName, double? distanceKm, double? bearing}) {
   return MaterialApp(

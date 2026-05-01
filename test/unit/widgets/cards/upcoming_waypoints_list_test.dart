@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:waypoint_alert_app/widgets/cards/upcoming_waypoints_list.dart';
 
-import '../../helpers/expect_helpers.dart';
+import '../../../helpers/expect_helpers.dart';
 
 Widget _buildScaffold({required List<UpcomingWaypoint> waypoints, required double maxDistanceKm}) {
   return MaterialApp(

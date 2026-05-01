@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:waypoint_alert_app/widgets/cards/active_set_card.dart';
 
-import '../../helpers/expect_helpers.dart';
+import '../../../helpers/expect_helpers.dart';
 
 Widget _buildScaffold(String setName, int waypointCount, {VoidCallback? onTap}) {
   return MaterialApp(
