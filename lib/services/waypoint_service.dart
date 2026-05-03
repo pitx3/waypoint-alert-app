@@ -1,4 +1,4 @@
-// lib/services/waypoint_service.dart
+import 'dart:math' as math;
 
 import 'package:isar_community/isar.dart';
 import 'package:waypoint_alert_app/models/waypoint.dart';
@@ -17,6 +17,12 @@ class WaypointService {
 
   Isar get _db => isarService.instance;
 
+  // Method to override for testing
+  // It's impossible to mock writeTxn(fn).
+  Future<T> txn<T>(Future<T> Function() fn) async {
+    return _db.writeTxn(fn);
+  }
+
   // ==================== WaypointSet Operations ====================
 
   Future<WaypointSet> createSet({
@@ -30,14 +36,14 @@ class WaypointService {
       description: description,
     );
 
-    await _db.writeTxn(() => _db.waypointSets.put(waypointSet));
+    await txn(() => _db.waypointSets.put(waypointSet));
     return waypointSet;
   }
 
   Future<void> activateSet(int setId) async {
     // Deactivate all sets first
     final allSets = await _db.waypointSets.where().findAll();
-    await _db.writeTxn(() async {
+    await _db.txn(() async {
       for (final set in allSets) {
         set.isActive = (set.id == setId);
         await _db.waypointSets.put(set);
@@ -49,7 +55,7 @@ class WaypointService {
   }
 
   Future<void> deleteSet(int setId) async {
-    await _db.writeTxn(() async {
+    await _db.txn(() async {
       // Delete all waypoints in this set first
       final waypoints = await _db.waypoints
           .filter()
@@ -86,7 +92,7 @@ class WaypointService {
 
   Future<void> addWaypoints(List<Waypoint> waypoints) async {
     if (waypoints.isEmpty) return;
-    await _db.writeTxn(() => _db.waypoints.putAll(waypoints));
+    await _db.txn(() => _db.waypoints.putAll(waypoints));
   }
 
   Future<Waypoint?> getWaypoint(int id) async {
@@ -94,18 +100,20 @@ class WaypointService {
   }
 
   Future<List<Waypoint>> getWaypointsForSet(int setId) async {
-    return _db.waypoints
+    final waypoints = await _db.waypoints
         .filter()
         .setIdEqualTo(setId)
-        .sortByDistance();
+        .findAll();
+
+    return waypoints..sort((a,b) => a.name.compareTo(b.name));
   }
 
   Future<void> updateWaypoint(Waypoint waypoint) async {
-    await _db.writeTxn(() => _db.waypoints.put(waypoint));
+    await _db.txn(() => _db.waypoints.put(waypoint));
   }
 
   Future<void> deleteWaypoint(int id) async {
-    await _db.writeTxn(() => _db.waypoints.delete(id));
+    await _db.txn(() => _db.waypoints.delete(id));
   }
 
   // ==================== Query Operations for GPS Monitoring ====================
@@ -218,13 +226,13 @@ class WaypointService {
     final dLat = _toRadians(lat2 - lat1);
     final dLon = _toRadians(lon2 - lon1);
 
-    final a = (dLat / 2).sin() * (dLat / 2).sin() +
-        _toRadians(lat1).cos() *
-            _toRadians(lat2).cos() *
-            (dLon / 2).sin() *
-            (dLon / 2).sin();
+    final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+        math.cos(_toRadians(lat1)) *
+            math.cos(_toRadians(lat2)) *
+            math.sin(dLon / 2) *
+            math.sin(dLon / 2);
 
-    final c = 2 * (a.sqrt().asin());
+    final c = 2 * math.asin(math.sqrt(a));
     return earthRadius * c;
   }
 

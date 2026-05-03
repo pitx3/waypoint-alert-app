@@ -6,12 +6,19 @@ import 'package:waypoint_alert_app/models/waypoint_set.dart';
 class IsarService {
   late final Isar _isar;
 
-  Future<void> init({String? directory}) async {
-    final dbPath = directory ?? await getApplicationDocumentsDirectory().path;
-
+  Future<void> init({String? directory, bool inspector = false}) async {
+    String? dbPath;
+    if (directory != null) {
+      dbPath = directory;
+    } else {
+      dynamic dir = await getApplicationDocumentsDirectory();
+      dbPath = dir.path;
+    }
+    
     _isar = await Isar.open(
       [WaypointSetSchema, WaypointSchema],
-      directory: dbPath,
+      directory: dbPath ?? '',
+      inspector: inspector,
       // TODO: add encryption keys later
     );
   }

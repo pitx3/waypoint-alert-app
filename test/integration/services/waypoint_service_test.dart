@@ -3,7 +3,6 @@
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:isar_community/isar.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:waypoint_alert_app/models/waypoint.dart';
 import 'package:waypoint_alert_app/models/waypoint_set.dart';
@@ -20,15 +19,12 @@ void main() {
   setUpAll(() async {
     // Create a temporary directory for test database
     tempDir = await Directory.systemTemp.createTemp('waypoint_test_');
-    
-    // Override path_provider for tests
-    setApplicationDocumentsPath(tempDir.path);
   });
 
   setUp(() async {
     // Initialize Isar with temp directory
     isarService = IsarService();
-    await isarService.init(directory: tempDir.path);
+    await isarService.init(directory: tempDir.path, inspector: true);
     
     // Initialize SharedPreferences for tests
     SharedPreferences.setMockInitialValues({});
