@@ -1,6 +1,5 @@
 // test/unit/services/waypoint_service_test.dart
 
-import 'dart:math' as math;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:waypoint_alert_app/models/waypoint.dart';
@@ -8,6 +7,8 @@ import 'package:waypoint_alert_app/models/waypoint_set.dart';
 import 'package:waypoint_alert_app/services/settings_service.dart';
 import 'package:waypoint_alert_app/services/waypoint_repository.dart';
 import 'package:waypoint_alert_app/services/waypoint_service.dart';
+
+import '../../helpers/expect_helpers.dart';
 
 // Mock classes
 class MockWaypointRepository extends Mock implements WaypointRepository {}
@@ -17,6 +18,9 @@ void main() {
   late MockWaypointRepository mockRepository;
   late MockSettingsService mockSettingsService;
   late WaypointService waypointService;
+
+  registerFallbackValue(Future<void>.value());
+
 
   setUp(() {
     mockRepository = MockWaypointRepository();
@@ -166,26 +170,32 @@ void main() {
       ];
 
       when(() => mockRepository.getAllSets()).thenAnswer((_) async => allSets);
-      when(() => mockRepository.updateSet(any())).thenAnswer((_) async => {});
       when(() => mockSettingsService.setActiveSetId(2)).thenAnswer((_) async => {});
+
+      List<WaypointSet>? capturedSets;
+
+      when(() => mockRepository.updateSets(captureAny())).thenAnswer((invocation) {
+        capturedSets = invocation.positionalArguments[0] as List<WaypointSet>;
+        return Future.value();
+      });
 
       await waypointService.activateSet(2);
 
-      // Verify set 1 was deactivated
-      verify(() => mockRepository.updateSet(argThat(
-        isA<WaypointSet>().having((s) => s.id, 'id', 1).having((s) => s.isActive, 'isActive', false),
-      ))).called(1);
+      // verify we called something
+      verify(() => mockRepository.updateSets(any())).called(1);
 
-      // Verify set 2 was activated
-      verify(() => mockRepository.updateSet(argThat(
-        isA<WaypointSet>().having((s) => s.id, 'id', 2).having((s) => s.isActive, 'isActive', true),
-      ))).called(1);
-
+      // Check the captured results
+      expectNotNull(capturedSets, reason: 'No captured results');
+      expect(capturedSets!.length, equals(2));
+      expectFalse(capturedSets!.firstWhere((s) => s.id == 1).isActive, reason: 'Set 1 isActive was not false');
+      expectTrue(capturedSets!.firstWhere((s) => s.id == 2).isActive, reason: 'Set 2 isActive was not true');
+      
       verify(() => mockSettingsService.setActiveSetId(2)).called(1);
     });
 
     test('updates settings with active set ID', () async {
       when(() => mockRepository.getAllSets()).thenAnswer((_) async => []);
+      when(() => mockRepository.updateSets(any())).thenAnswer((_) async => {});
       when(() => mockSettingsService.setActiveSetId(5)).thenAnswer((_) async => {});
 
       await waypointService.activateSet(5);
@@ -202,15 +212,11 @@ void main() {
       ];
 
       when(() => mockRepository.getWaypointsForSet(5)).thenAnswer((_) async => waypoints);
-      when(() => mockRepository.deleteWaypoint(10)).thenAnswer((_) async => {});
-      when(() => mockRepository.deleteWaypoint(11)).thenAnswer((_) async => {});
       when(() => mockRepository.deleteSet(5)).thenAnswer((_) async => {});
       when(() => mockSettingsService.getActiveSetId()).thenAnswer((_) async => null);
 
       await waypointService.deleteSet(5);
 
-      verify(() => mockRepository.deleteWaypoint(10)).called(1);
-      verify(() => mockRepository.deleteWaypoint(11)).called(1);
       verify(() => mockRepository.deleteSet(5)).called(1);
     });
 

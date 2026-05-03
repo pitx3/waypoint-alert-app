@@ -32,41 +32,6 @@ class WaypointRepository {
     return waypointSet;
   }
 
-
-  Future<void> activateSet(int setId) async {
-    // Deactivate all sets first
-    final allSets = await _db.waypointSets.where().findAll();
-    await _db.writeTxn(() async {
-      for (final set in allSets) {
-        set.isActive = (set.id == setId);
-        await _db.waypointSets.put(set);
-      }
-    });
-
-    // Update the active set ID in settings
-    await settingsService.setActiveSetId(setId);
-  }
-
-  Future<void> deleteSet(int setId) async {
-    await _db.writeTxn(() async {
-      // Delete all waypoints in this set first
-      final waypoints = await _db.waypoints
-          .filter()
-          .setIdEqualTo(setId)
-          .findAll();
-      await _db.waypoints.deleteAll(waypoints.map((w) => w.id).toList());
-
-      // Delete the set
-      await _db.waypointSets.delete(setId);
-    });
-
-    // Clear active set ID if we deleted the active set
-    final currentActiveId = await settingsService.getActiveSetId();
-    if (currentActiveId == setId) {
-      await settingsService.setActiveSetId(null);
-    }
-  }
-
   Future<WaypointSet?> getSet(int setId) async {
     return _db.waypointSets.get(setId);
   }
@@ -79,6 +44,21 @@ class WaypointRepository {
     final activeId = await settingsService.getActiveSetId();
     if (activeId == null) return null;
     return getSet(activeId);
+  }
+
+  Future<void> updateSets(List<WaypointSet> sets) async {
+    await _db.writeTxn(() => _db.waypointSets.putAll(sets));
+  }
+
+  Future<void> deleteSet(int setId) async {
+    await _db.writeTxn(() async {
+      final waypoints = await _db.waypoints
+        .filter()
+        .setIdEqualTo(setId)
+        .findAll();
+      await _db.waypoints.deleteAll(waypoints.map((w) => w.id).toList());
+      await _db.waypointSets.delete(setId);
+    });
   }
 
  // ==================== Waypoint Operations ====================

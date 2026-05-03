@@ -8,10 +8,10 @@ import 'package:waypoint_alert_app/services/waypoint_repository.dart';
 
 class WaypointService {
   final SettingsService settingsService;
-  final WaypointRepository waypointRepository;
+  final WaypointRepository repository;
 
   WaypointService({
-    required this.waypointRepository,
+    required this.repository,
     required this.settingsService,
   });
 
@@ -26,7 +26,7 @@ class WaypointService {
     double currentLat,
     double currentLon,
   ) async {
-    final waypoints = await waypointRepository.getWaypointsForSet(setId);
+    final waypoints = await repository.getWaypointsForSet(setId);
     if (waypoints.isEmpty) return null;
 
     Waypoint? closest;
@@ -56,7 +56,7 @@ class WaypointService {
     double currentLon, {
     double maxDistance = 10000,
   }) async {
-    final waypoints = await waypointRepository.getWaypointsForSet(setId);
+    final waypoints = await repository.getWaypointsForSet(setId);
     final waterWaypoints = waypoints.where((w) => w.type.toLowerCase() == 'water');
 
     if (waterWaypoints.isEmpty) return null;
@@ -88,7 +88,7 @@ class WaypointService {
     double currentLon, {
     double maxDistance = 5000,
   }) async {
-    final waypoints = await waypointRepository.getWaypointsForSet(setId);
+    final waypoints = await repository.getWaypointsForSet(setId);
     final upcoming = <Waypoint, double>{};
 
     for (final waypoint in waypoints) {
@@ -110,6 +110,29 @@ class WaypointService {
 
     return sorted.map((e) => e.key).toList();
   }
+
+  Future<void> activateSet(int setId) async {
+    // Deactivate all sets first
+    final allSets = await repository.getAllSets();
+    for (final set in allSets) {
+      set.isActive = (set.id == setId);
+    }
+    await repository.updateSets(allSets);
+
+    // Update the active set ID in settings
+    await settingsService.setActiveSetId(setId);
+  }
+
+  Future<void> deleteSet(int setId) async {
+    await repository.deleteSet(setId);
+
+    // Clear active set ID if we deleted the active set
+    final currentActiveId = await settingsService.getActiveSetId();
+    if (currentActiveId == setId) {
+      await settingsService.setActiveSetId(null);
+    }
+  }
+
 
   // ==================== Utility ====================
 

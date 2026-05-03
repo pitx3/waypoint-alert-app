@@ -7,11 +7,18 @@ class IsarService {
   late final Isar _isar;
 
   Future<void> init({String? directory}) async {
-    final dbPath = directory ?? await getApplicationDocumentsDirectory().path;
+    String? dbPath;
+
+    if (directory != null) {
+      dbPath = directory;
+    } else {
+      dynamic dir = await getApplicationDocumentsDirectory();
+      dbPath = dir.path;
+    }
 
     _isar = await Isar.open(
       [WaypointSetSchema, WaypointSchema],
-      directory: dbPath,
+      directory: dbPath ?? '',
       // TODO: add encryption keys later
     );
   }
