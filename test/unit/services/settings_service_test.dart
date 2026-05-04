@@ -94,7 +94,7 @@ void main() {
     test('getActiveSetId returns null when not set', () async {
       when(() => mockPrefs.getInt(AppConstants.keyActiveSetId)).thenReturn(null);
 
-      final result = await settingsService.getActiveSetId();
+      final result = settingsService.getActiveSetId();
 
       expectNull(result, reason: 'ActiveSetId should be null when not set.');
     });
@@ -102,7 +102,7 @@ void main() {
     test('getActiveSetId returns stored value', () async {
       when(() => mockPrefs.getInt(AppConstants.keyActiveSetId)).thenReturn(42);
 
-      final result = await settingsService.getActiveSetId();
+      final result = settingsService.getActiveSetId();
 
       expect(result, 42, reason: 'Should return stored active set ID');
     });

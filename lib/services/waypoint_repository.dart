@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:isar_community/isar.dart';
 import 'package:waypoint_alert_app/models/waypoint.dart';
 import 'package:waypoint_alert_app/models/waypoint_set.dart';
@@ -41,7 +43,7 @@ class WaypointRepository {
   }
 
   Future<WaypointSet?> getActiveSet() async {
-    final activeId = await settingsService.getActiveSetId();
+    final activeId = settingsService.getActiveSetId();
     if (activeId == null) return null;
     return getSet(activeId);
   }
@@ -94,7 +96,7 @@ class WaypointRepository {
     int setId,
     double lat,
     double lon,
-    double maxDistance,
+    int maxDistance,
   ) async {
     final all = await _db.waypoints
         .filter()

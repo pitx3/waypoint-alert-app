@@ -24,15 +24,15 @@ class WaypointService {
     double currentLat,
     double currentLon,
   ) async {
-    final maxDistance = settingsService.getMaxDistanceM();
-    
-    final nearby = await repository.getWaypointsWithinDistance(
-      setId,
-      currentLat,
-      currentLon,
-      maxDistance,
-    );
-    
+    final int maxDistance = settingsService.getMaxSearchDistanceM();
+
+    final allWaypoints = await repository.getWaypointsForSet(setId);
+
+    final nearby = allWaypoints.where((wp) {
+      final distance = _calculateDistance(currentLat, currentLon, wp.latitude, wp.longitude);
+      return distance <= maxDistance;
+    }).toList();
+
     if (nearby.isEmpty) return null;
     
     // Sort by trail order (name)
@@ -137,7 +137,7 @@ class WaypointService {
     await repository.deleteSet(setId);
 
     // Clear active set ID if we deleted the active set
-    final currentActiveId = await settingsService.getActiveSetId();
+    final currentActiveId = settingsService.getActiveSetId();
     if (currentActiveId == setId) {
       await settingsService.setActiveSetId(null);
     }

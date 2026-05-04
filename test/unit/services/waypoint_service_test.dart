@@ -44,6 +44,7 @@ void main() {
       ];
 
       when(() => mockRepository.getWaypointsForSet(1)).thenAnswer((_) async => waypoints);
+      when(() => mockSettingsService.getMaxSearchDistanceM()).thenReturn(5000);
 
       final result = await waypointService.getNextWaypoint(1, currentLat, currentLon);
 
@@ -53,6 +54,7 @@ void main() {
 
     test('returns null when no waypoints exist', () async {
       when(() => mockRepository.getWaypointsForSet(1)).thenAnswer((_) async => []);
+      when(() => mockSettingsService.getMaxSearchDistanceM()).thenReturn(5000);
 
       final result = await waypointService.getNextWaypoint(1, 39.0, -105.0);
 
@@ -213,7 +215,7 @@ void main() {
 
       when(() => mockRepository.getWaypointsForSet(5)).thenAnswer((_) async => waypoints);
       when(() => mockRepository.deleteSet(5)).thenAnswer((_) async => {});
-      when(() => mockSettingsService.getActiveSetId()).thenAnswer((_) async => null);
+      when(() => mockSettingsService.getActiveSetId()).thenAnswer((_) => null);
 
       await waypointService.deleteSet(5);
 
@@ -223,7 +225,7 @@ void main() {
     test('clears active set ID if deleted set was active', () async {
       when(() => mockRepository.getWaypointsForSet(5)).thenAnswer((_) async => []);
       when(() => mockRepository.deleteSet(5)).thenAnswer((_) async => {});
-      when(() => mockSettingsService.getActiveSetId()).thenAnswer((_) async => 5);
+      when(() => mockSettingsService.getActiveSetId()).thenAnswer((_) => 5);
       when(() => mockSettingsService.setActiveSetId(null)).thenAnswer((_) async => {});
 
       await waypointService.deleteSet(5);
@@ -234,7 +236,7 @@ void main() {
     test('does not clear active ID if different set was deleted', () async {
       when(() => mockRepository.getWaypointsForSet(5)).thenAnswer((_) async => []);
       when(() => mockRepository.deleteSet(5)).thenAnswer((_) async => {});
-      when(() => mockSettingsService.getActiveSetId()).thenAnswer((_) async => 3);
+      when(() => mockSettingsService.getActiveSetId()).thenAnswer((_) => 3);
 
       await waypointService.deleteSet(5);
 
@@ -288,8 +290,9 @@ void main() {
       final testLat = 39.43420;
       final testLon = -105.12180;
 
-      when(() => mockRepository.getWaypointsWithinDistance(1, testLat, testLon, 5000))
-          .thenAnswer((_) async => testWaypoints);
+      when(() => mockRepository.getWaypointsForSet(1)).thenAnswer((_) async => testWaypoints);
+      when(() => mockSettingsService.getMaxSearchDistanceM()).thenReturn(5000);
+
 
       final result = await waypointService.getNextWaypoint(1, testLat, testLon);
 
@@ -299,8 +302,8 @@ void main() {
     });
 
     test('returns null when no waypoints within range', () async {
-      when(() => mockRepository.getWaypointsWithinDistance(1, 40.0, -106.0, 5000))
-          .thenAnswer((_) async => []);
+      when(() => mockRepository.getWaypointsForSet(1)).thenAnswer((_) async => testWaypoints);
+      when(() => mockSettingsService.getMaxSearchDistanceM()).thenReturn(5000);
 
       final result = await waypointService.getNextWaypoint(1, 40.0, -106.0);
 
@@ -312,8 +315,8 @@ void main() {
       final testLat = 39.43200;
       final testLon = -105.12100;
 
-      when(() => mockRepository.getWaypointsWithinDistance(1, testLat, testLon, 5000))
-          .thenAnswer((_) async => testWaypoints);
+      when(() => mockRepository.getWaypointsForSet(1)).thenAnswer((_) async => testWaypoints);
+      when(() => mockSettingsService.getMaxSearchDistanceM()).thenReturn(5000);
 
       final result = await waypointService.getNextWaypoint(1, testLat, testLon);
 
