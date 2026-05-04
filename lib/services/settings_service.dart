@@ -17,7 +17,8 @@ class SettingsService {
       gpsPingInterval: prefs.getInt(AppConstants.keyGpsPingInterval) ?? AppConstants.defaultGpsPingInterval,
       walkingSpeedMpm: prefs.getInt(AppConstants.keyWalkingSpeedMpm) ?? AppConstants.defaultWalkingSpeedMpm,
       defaultAlertDistanceM: prefs.getInt(AppConstants.keyDefaultAlertDistanceM) ?? AppConstants.defaultAlertDistanceM,
-      hasCompletedFirstRun: prefs.getBool(AppConstants.keyHasCompletedFirstRun) ?? AppConstants.defaultHasCompletedFirstRun
+      hasCompletedFirstRun: prefs.getBool(AppConstants.keyHasCompletedFirstRun) ?? AppConstants.defaultHasCompletedFirstRun,
+      maxSearchDistanceM: prefs.getInt(AppConstants.keyMaxSearchDistanceM) ?? AppConstants.defaultMaxSearchDistanceM,
     );
   }
 
@@ -38,7 +39,7 @@ class SettingsService {
     await prefs.setBool(AppConstants.keyHasCompletedFirstRun, true);
   }
 
-  Future<int?> getActiveSetId() async => prefs.getInt(AppConstants.keyActiveSetId);
+  int? getActiveSetId() => prefs.getInt(AppConstants.keyActiveSetId);
   Future<void> setActiveSetId(int? id) async {
     if (id == null) {
       await prefs.remove(AppConstants.keyActiveSetId);
@@ -52,4 +53,10 @@ class SettingsService {
       await prefs.remove(AppConstants.keyHasCompletedFirstRun);
     }
   }
+
+  int getMaxSearchDistanceM() => prefs.getInt(AppConstants.keyMaxSearchDistanceM) ?? AppConstants.defaultMaxSearchDistanceM;
+  Future<void> setMaxSearchDistanceM(int meters) async {
+    await prefs.setInt(AppConstants.keyMaxSearchDistanceM, meters);
+  }
+
 }

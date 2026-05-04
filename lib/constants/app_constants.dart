@@ -9,12 +9,14 @@ class AppConstants {
   static const String keyDefaultAlertDistanceM = 'default_alert_distance_m';
   static const String keyHasCompletedFirstRun = 'has_completed_first_run';
   static const String keyActiveSetId = 'active_set_id';
+  static const String keyMaxSearchDistanceM = 'max_search_distance_m';
 
   // Default values
   static const int defaultGpsPingInterval = 300;
   static const int defaultWalkingSpeedMpm = 100;
   static const int defaultAlertDistanceM = 250;
   static const bool defaultHasCompletedFirstRun = false;
+  static const int defaultMaxSearchDistanceM = 5000;
 
   // Validation ranges
   static const int minGpsPingInterval = 30;

@@ -20,7 +20,7 @@ class Waypoint {
   String type;
   String? notes;
   String? direction;
-  bool enabled;
+  // bool enabled;
   List<Alert> alerts;
 
   Waypoint({
@@ -32,7 +32,7 @@ class Waypoint {
     required this.type,
     this.notes,
     this.direction,
-    this.enabled = true,
+    // this.enabled = true,
     required this.alerts,
   });
 
@@ -45,7 +45,7 @@ class Waypoint {
     String? type,
     String? notes,
     String? direction,
-    bool? enabled,
+    // bool? enabled,
     List<Alert>? alerts,
   }) {
     return Waypoint(
@@ -57,7 +57,7 @@ class Waypoint {
       type: type ?? this.type,
       notes: notes ?? this.notes,
       direction: direction ?? this.direction,
-      enabled: enabled ?? this.enabled,
+      // enabled: enabled ?? this.enabled,
       alerts: alerts ?? this.alerts,
     );
   }
@@ -71,7 +71,7 @@ class Waypoint {
     type: json['type'],
     notes: json['notes'],
     direction: json['direction'],
-    enabled: json['enabled'] ?? true,
+    // enabled: json['enabled'] ?? true,
     alerts: (json['alerts'] as List?)
       ?.map((a) => Alert.fromJson(a))
       .toList() ?? [],

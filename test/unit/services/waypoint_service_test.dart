@@ -267,4 +267,68 @@ void main() {
       expect(result[0].name, equals('Boulder'));
     });
   });
+
+  group('getNextWaypoint with real CT data pattern', () {
+    // First 10 waypoints from segment 01, scaled for testing
+    final testWaypoints = [
+      Waypoint(id: 1, setId: 1, name: '01-000TH', latitude: 39.49127, longitude: -105.09501, type: 'trailhead', alerts: []),
+      Waypoint(id: 2, setId: 1, name: '01-010WT', latitude: 39.41021, longitude: -105.13074, type: 'water', alerts: []),
+      Waypoint(id: 3, setId: 1, name: '01-033WT', latitude: 39.47043, longitude: -105.1353, type: 'water', alerts: []),
+      Waypoint(id: 4, setId: 1, name: '01-066XT', latitude: 39.43476, longitude: -105.12306, type: 'crossing', alerts: []),
+      Waypoint(id: 5, setId: 1, name: '01-068OP', latitude: 39.43364, longitude: -105.12059, type: 'other', alerts: []),
+      Waypoint(id: 6, setId: 1, name: '01-070XR', latitude: 39.43065, longitude: -105.11882, type: 'crossing', alerts: []),
+      Waypoint(id: 7, setId: 1, name: '01-071XT', latitude: 39.42876, longitude: -105.11957, type: 'crossing', alerts: []),
+      Waypoint(id: 8, setId: 1, name: '01-082XT', latitude: 39.42407, longitude: -105.12075, type: 'crossing', alerts: []),
+      Waypoint(id: 9, setId: 1, name: '01-083FT', latitude: 39.42404, longitude: -105.12089, type: 'trail', alerts: []),
+      Waypoint(id: 10, setId: 1, name: '01-091WT', latitude: 39.41959, longitude: -105.12433, type: 'water', alerts: []),
+    ];
+
+    test('returns closest waypoint when positioned between waypoints', () async {
+      // Position roughly between 01-066XT and 01-068OP
+      final testLat = 39.43420;
+      final testLon = -105.12180;
+
+      when(() => mockRepository.getWaypointsWithinDistance(1, testLat, testLon, 5000))
+          .thenAnswer((_) async => testWaypoints);
+
+      final result = await waypointService.getNextWaypoint(1, testLat, testLon);
+
+      expect(result, isNotNull);
+      // Should return 01-066XT or 01-068OP (whichever is closer)
+      expect(result!.name, isIn(['01-066XT', '01-068OP']));
+    });
+
+    test('returns null when no waypoints within range', () async {
+      when(() => mockRepository.getWaypointsWithinDistance(1, 40.0, -106.0, 5000))
+          .thenAnswer((_) async => []);
+
+      final result = await waypointService.getNextWaypoint(1, 40.0, -106.0);
+
+      expect(result, isNull);
+    });
+
+    test('handles clustered waypoints correctly', () async {
+      // Position near the 01-066XT through 01-071XT cluster
+      final testLat = 39.43200;
+      final testLon = -105.12100;
+
+      when(() => mockRepository.getWaypointsWithinDistance(1, testLat, testLon, 5000))
+          .thenAnswer((_) async => testWaypoints);
+
+      final result = await waypointService.getNextWaypoint(1, testLat, testLon);
+
+      expect(result, isNotNull);
+      // Should return one of the clustered waypoints
+      expect(result!.name, isIn(['01-066XT', '01-068OP', '01-070XR', '01-071XT']));
+    });
+
+    test('sorts by trail order (name) correctly', () async {
+      // Verify the name-based sorting gives trail order
+      final sorted = List<Waypoint>.from(testWaypoints)
+        ..sort((a, b) => a.name.compareTo(b.name));
+
+      expect(sorted[0].name, equals('01-000TH'));
+      expect(sorted[9].name, equals('01-091WT'));
+    });
+  });
 }

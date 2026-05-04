@@ -89,4 +89,37 @@ class WaypointRepository {
   }
 
 
+
+  Future<List<Waypoint>> getWaypointsWithinDistance(
+    int setId,
+    double lat,
+    double lon,
+    double maxDistance,
+  ) async {
+    final all = await _db.waypoints
+        .filter()
+        .setIdEqualTo(setId)
+        .findAll();
+    
+    return all.where((wp) {
+      final distance = _calculateDistance(lat, lon, wp.latitude, wp.longitude);
+      return distance <= maxDistance;
+    }).toList();
+  }
+
+  // =====================  Math helper functions ===================
+  
+  double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+    const earthRadius = 6371000;
+    final dLat = _toRadians(lat2 - lat1);
+    final dLon = _toRadians(lon2 - lon1);
+    final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+        math.cos(_toRadians(lat1)) * math.cos(_toRadians(lat2)) *
+        math.sin(dLon / 2) * math.sin(dLon / 2);
+    final c = 2 * math.asin(math.sqrt(a));
+    return earthRadius * c;
+  }
+
+  double _toRadians(double degrees) => degrees * (math.pi / 180.0);
+
 }

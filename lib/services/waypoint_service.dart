@@ -19,34 +19,44 @@ class WaypointService {
   // ==================== Query Operations for GPS Monitoring ====================
 
   /// Returns the next waypoint ahead on the trail (closest waypoint in front)
-  /// This is a simplified version - assumes waypoints are ordered by distance
-  /// A more sophisticated version would use bearing to determine "ahead"
   Future<Waypoint?> getNextWaypoint(
     int setId,
     double currentLat,
     double currentLon,
   ) async {
-    final waypoints = await repository.getWaypointsForSet(setId);
-    if (waypoints.isEmpty) return null;
-
-    Waypoint? closest;
+    final maxDistance = settingsService.getMaxDistanceM();
+    
+    final nearby = await repository.getWaypointsWithinDistance(
+      setId,
+      currentLat,
+      currentLon,
+      maxDistance,
+    );
+    
+    if (nearby.isEmpty) return null;
+    
+    // Sort by trail order (name)
+    nearby.sort((a, b) => a.name.compareTo(b.name));
+    
+    // Find minimum distance waypoint
+    Waypoint? minWaypoint;
     double minDistance = double.infinity;
-
-    for (final waypoint in waypoints) {
+    
+    for (final wp in nearby) {
       final distance = _calculateDistance(
         currentLat,
         currentLon,
-        waypoint.latitude,
-        waypoint.longitude,
+        wp.latitude,
+        wp.longitude,
       );
-
+      
       if (distance < minDistance) {
         minDistance = distance;
-        closest = waypoint;
+        minWaypoint = wp;
       }
     }
-
-    return closest;
+    
+    return minWaypoint;
   }
 
   /// Returns the closest water waypoint within maxDistance meters
