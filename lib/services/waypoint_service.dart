@@ -114,6 +114,18 @@ class WaypointService {
     // If distToC < distBC, we're after B (approaching C)
     final beforeB = distToA < distAB;
     final afterB = distToC < distBC;
+
+    // Edge case: no C means we're past the end of the trail
+    if (waypointC == null) {
+      if (!beforeB) return null;
+      return closestB;
+    }
+
+    // Edge case: no A means we're before the start of the trail
+    if (waypointA == null) {
+      if (afterB) return waypointC;
+      return closestB;
+    }
     
     // Determine which waypoint we're approaching
     if (beforeB && !afterB) {
@@ -203,29 +215,37 @@ class WaypointService {
     int setId,
     double currentLat,
     double currentLon, {
-    double maxDistance = 5000,
+    int maxDistance = 5000,    // TODO: Remove 'magic number'
   }) async {
-    final waypoints = await repository.getWaypointsForSet(setId);
-    final upcoming = <Waypoint, double>{};
+    final allWaypoints = await repository.getWaypointsForSet(setId);
+    if (allWaypoints.isEmpty) return [];
 
-    for (final waypoint in waypoints) {
-      final distance = _calculateDistance(
-        currentLat,
-        currentLon,
-        waypoint.latitude,
-        waypoint.longitude,
-      );
+    // sort by name (trail order)
+    allWaypoints.sort((a, b) => a.name.compareTo(b.name));
+
+    // find the first waypoint ahead on the trail
+    final nextWaypoint = await getNextWaypoint(setId, currentLat, currentLon);
+    if (nextWaypoint == null) return [];
+
+    // find the index of the next waypoint on the sorted list
+    final startIndex = allWaypoints.indexWhere((wp) => wp.id == nextWaypoint.id);
+    if (startIndex == -1) return [];
+
+    // walk forward through waypoints, collecting those within maxDistance
+    final upcoming = <Waypoint>[];
+    for (var i = startIndex; i < allWaypoints.length; i++) {
+      final waypoint = allWaypoints[i];
+      final distance = _calculateDistance(currentLat, currentLon, waypoint.latitude, waypoint.longitude);
 
       if (distance <= maxDistance) {
-        upcoming[waypoint] = distance;
+        upcoming.add(waypoint);
+      } else {
+        // once we exceed maxDistance, stop (waypoints are in trail order)
+        break;
       }
     }
 
-    // Sort by distance and return just the waypoints
-    final sorted = upcoming.entries.toList()
-      ..sort((a, b) => a.value.compareTo(b.value));
-
-    return sorted.map((e) => e.key).toList();
+    return upcoming;    
   }
 
   // ==== Waypoint Set Operations ==== //
