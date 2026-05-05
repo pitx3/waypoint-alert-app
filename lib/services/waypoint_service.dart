@@ -2,6 +2,7 @@
 
 import 'dart:math' as math;
 
+import 'package:waypoint_alert_app/models/water_info.dart';
 import 'package:waypoint_alert_app/models/waypoint.dart';
 import 'package:waypoint_alert_app/services/settings_service.dart';
 import 'package:waypoint_alert_app/services/waypoint_repository.dart';
@@ -142,6 +143,45 @@ class WaypointService {
       // Default to returning closest
       return closestB;
     }
+  }
+
+  /// Get WaterInfo model for card
+  Future<WaterInfo> getWaterInfo(
+    int setId,
+    double currentLat,
+    double currentLon,
+  ) async {
+    final closestWater = await getClosestWater(setId, currentLat, currentLon);
+
+    if (closestWater == null) {
+      return WaterInfo(closestWater: null, closestDitanceMeters: null, closestBearing: null);
+    }
+
+    // get distance and bearinf for closest water
+    final closestDistance = _calculateDistance(currentLat, currentLon, closestWater.latitude, closestWater.longitude);
+    final closestBearing = _getBearing(currentLat, currentLon, closestWater.latitude, closestWater.longitude);
+
+    final nextWaterAhead = await getNextWater(setId, currentLat, currentLon);
+
+    // if nextWaterAhead is the same as closestWater then closestWater is ahead
+    final isClosestBehind = nextWaterAhead?.id != closestWater.id;
+
+    double? nextWaterDistance;
+    double? nextWaterBearing;
+    if (isClosestBehind && nextWaterAhead != null) {
+      nextWaterDistance = _calculateDistance(currentLat, currentLon, nextWaterAhead.latitude, nextWaterAhead.longitude);
+      nextWaterBearing = _getBearing(currentLat, currentLon, nextWaterAhead.latitude, nextWaterAhead.longitude);
+    }
+
+    return WaterInfo(
+      closestWater: closestWater,
+      closestDitanceMeters: closestDistance, 
+      closestBearing: closestBearing,
+      isClosestBehind: isClosestBehind,
+      nextWaterAhead: isClosestBehind ? nextWaterAhead : null,
+      nextWaterDistanceMeters: nextWaterDistance,
+      nextWaterBearing: nextWaterBearing,
+    );
   }
 
 
@@ -297,5 +337,28 @@ class WaypointService {
     return earthRadius * c;
   }
 
-  double _toRadians(double degrees) => degrees * (3.141592653589793 / 180.0);
+  double _getBearing(
+    double fromLat,
+    double fromLon,
+    double toLat,
+    double toLon,
+  ) {
+    final lat1 = _toRadians(fromLat);
+    final lat2 = _toRadians(toLat);
+    final dLon = _toRadians(toLon - fromLon);
+
+    final y = math.sin(dLon) * math.cos(lat2);
+    final x = math.cos(lat1) * math.sin(lat2) - math.sin(lat1) * math.cos(lat2) * math.cos(dLon);
+
+    // atan2 handles x=0 gracefully
+    final bearingRad = math.atan2(y, x);
+    final bearingDeg = _toDegrees(bearingRad);
+
+    // normalize to 0-360 and return
+    return (bearingDeg + 360) % 360;
+  }
+
+
+  double _toRadians(double degrees) => degrees * (math.pi / 180.0);
+  double _toDegrees(double radians) => radians * (180.0 / math.pi);
 }

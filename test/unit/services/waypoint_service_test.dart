@@ -551,10 +551,113 @@ void main() {
       expect(result!.name, contains('02-099'));
     });
   });
+
+  group('getWaterInfo', () {
+    setUp(() {
+      when(() => mockRepository.getWaypointsForSet(1))
+        .thenAnswer((_) async => segment01_02Waypoints);
+    });
+
+    test('returns closest water ahead when user is before it', () async {
+      // position before the first water waypoint (01-033WT)
+      final testLat = 39.4749;
+      final testLon = -105.12963;
+
+      final result = await waypointService.getWaterInfo(1, testLat, testLon);
+
+      expect(result.closestWater, isNotNull);
+      expect(result.closestWater!.name, equals('01-033WT'));
+      expect(result.isClosestBehind, isFalse);
+      expect(result.nextWaterAhead, isNull);
+      expect(result.closestBearing, isNotNull);
+      expect(result.closestBearing, greaterThanOrEqualTo(0));
+      expect(result.closestBearing, lessThan(360));
+    });
+
+    test('returns closest water behind and next water ahead', () async {
+      // position past 01-033WT and before 01-091WT and closer to 01-033WT
+      final testLat = 39.45054;
+      final testLon = -105.12248;
+
+      final result = await waypointService.getWaterInfo(1, testLat, testLon);
+
+      // closest water should be behind at 01-033WT
+      expect(result.closestWater, isNotNull);
+      expect(result.isClosestBehind, isTrue);
+      expect(result.closestWater!.name, equals('01-033WT'));
+      // next water ahead should be 01-091WT
+      expect(result.nextWaterAhead, isNotNull);
+      expect(result.nextWaterBearing, isNotNull);
+      expect(result.nextWaterAhead!.name, equals('01-091WT'));
+      expect(result.nextWaterBearing, greaterThanOrEqualTo(0));
+      expect(result.nextWaterBearing, lessThan(360));
+    });
+
+    test('returns null when no water waypoints available', () async {
+      when(() => mockRepository.getWaypointsForSet(99))
+        .thenAnswer((_) async => []);
+
+      final result = await waypointService.getWaterInfo(99, 39.45, -105.13);
+
+      expect(result.closestWater, isNull);
+      expect(result.closestDitanceMeters, isNull);
+      expect(result.closestBearing, isNull);
+      expect(result.isClosestBehind, isFalse);
+      expect(result.nextWaterAhead, isNull);
+      expect(result.nextWaterDistanceMeters, isNull);
+      expect(result.nextWaterBearing, isNull);
+    });
+
+    test('returns only closest water when it is the last water waypoint', () async {
+      // position past all water waypoints
+      final testLat = 39.34197;
+      final testLon = -105.26961;
+
+      final result = await waypointService.getWaterInfo(1, testLat, testLon);
+
+      expect(result.closestWater, isNotNull);
+      expect(result.isClosestBehind, isTrue);
+      expect(result.nextWaterAhead, isNull);
+    });
+
+    test('bearing is 90 degrees (due east) when waypoint is directly east', () async {
+      // tests the "x=0" edge case indirectly
+      final testWaypoints = [
+        Waypoint(id: 1, setId: 90, name: 'TEST-WATER', latitude: 39.45, longitude: -105.12, type: 'water', alerts: []),
+      ];
+
+      when(() => mockRepository.getWaypointsForSet(90))
+        .thenAnswer((_) async => testWaypoints);
+
+      // user is directly west of the waypoint
+      final result = await waypointService.getWaterInfo(90, 39.45, -105.13);
+
+      expect(result.closestWater, isNotNull);
+      expect(result.closestBearing, closeTo(90.0, 0.01));
+    });
+
+    test('bearing is 270 degrees (due west) when waypoint is directly west', () async {
+      // tests the "x=0" edge case indirectly
+      final testWaypoints = [
+        Waypoint(id: 1, setId: 90, name: 'TEST-WATER', latitude: 39.45, longitude: -105.12, type: 'water', alerts: []),
+      ];
+
+      when(() => mockRepository.getWaypointsForSet(90))
+        .thenAnswer((_) async => testWaypoints);
+
+      // user is directly west of the waypoint
+      final result = await waypointService.getWaterInfo(90, 39.45, -105.11);
+
+      expect(result.closestWater, isNotNull);
+      expect(result.closestBearing, closeTo(270.0, 0.01));
+    });
+
+  });
 }
 
 /// Calculate distance between two coordinates using Haversine formula
 /// Returns distance in meters
+/// DUPLICATE of the function in waypoint_service.dart since we can't use that one directly
 double _calculateDistance(
   double lat1,
   double lon1,
