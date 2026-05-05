@@ -349,7 +349,7 @@ void main() {
       final testLat = 39.50000;
       final testLon = -105.10000;
 
-      when(() => mockSettingsService.getMaxDistanceM()).thenReturn(5000);
+      when(() => mockSettingsService.getMaxSearchDistanceM()).thenReturn(5000);
       when(() => mockRepository.getWaypointsForSet(1)).thenAnswer((_) async => segment01Waypoints);
 
       final result = await waypointService.getNextWaypoint(1, testLat, testLon);
@@ -363,7 +363,7 @@ void main() {
       final testLat = 39.44000;
       final testLon = -105.13300;
 
-      when(() => mockSettingsService.getMaxDistanceM()).thenReturn(5000);
+      when(() => mockSettingsService.getMaxSearchDistanceM()).thenReturn(5000);
       when(() => mockRepository.getWaypointsForSet(1)).thenAnswer((_) async => segment01Waypoints);
 
       final result = await waypointService.getNextWaypoint(1, testLat, testLon);
@@ -383,7 +383,7 @@ void main() {
       final testLat = 39.43200;
       final testLon = -105.12100;
 
-      when(() => mockSettingsService.getMaxDistanceM()).thenReturn(5000);
+      when(() => mockSettingsService.getMaxSearchDistanceM()).thenReturn(5000);
       when(() => mockRepository.getWaypointsForSet(1)).thenAnswer((_) async => clusterWaypoints);
 
       final result = await waypointService.getNextWaypoint(1, testLat, testLon);
@@ -404,7 +404,7 @@ void main() {
       final testLat = 39.49200;
       final testLon = -105.09600;
 
-      when(() => mockSettingsService.getMaxDistanceM()).thenReturn(5000);
+      when(() => mockSettingsService.getMaxSearchDistanceM()).thenReturn(5000);
       when(() => mockRepository.getWaypointsForSet(1)).thenAnswer((_) async => mixedDistanceWaypoints);
 
       final result = await waypointService.getNextWaypoint(1, testLat, testLon);
@@ -422,7 +422,7 @@ void main() {
       final testLat = 39.40000;
       final testLon = -105.00000;
 
-      when(() => mockSettingsService.getMaxDistanceM()).thenReturn(5000);
+      when(() => mockSettingsService.getMaxSearchDistanceM()).thenReturn(5000);
       when(() => mockRepository.getWaypointsForSet(1)).thenAnswer((_) async => farWaypoints);
 
       final result = await waypointService.getNextWaypoint(1, testLat, testLon);
@@ -454,7 +454,7 @@ void main() {
         Waypoint(id: 3, setId: 1, name: '01-033WT', latitude: 39.47043, longitude: -105.1353, type: 'water', alerts: []),
       ];
 
-      when(() => mockSettingsService.getMaxDistanceM()).thenReturn(5000);
+      when(() => mockSettingsService.getMaxSearchDistanceM()).thenReturn(5000);
       when(() => mockRepository.getWaypointsForSet(1)).thenAnswer((_) async => waypoints);
 
       // Position 1: Near 01-000TH
@@ -513,7 +513,7 @@ void main() {
       final testLat = 39.50000;
       final testLon = -105.10000;
 
-      when(() => mockSettingsService.getMaxDistanceM()).thenReturn(5000);
+      when(() => mockSettingsService.getMaxSearchDistanceM()).thenReturn(5000);
       when(() => mockRepository.getWaypointsForSet(1)).thenAnswer((_) async => segment01_02Waypoints);
 
       final result = await waypointService.getNextWaypoint(1, testLat, testLon);
@@ -527,7 +527,7 @@ void main() {
       final testLat = 39.43476;
       final testLon = -105.12306;
 
-      when(() => mockSettingsService.getMaxDistanceM()).thenReturn(5000);
+      when(() => mockSettingsService.getMaxSearchDistanceM()).thenReturn(5000);
       when(() => mockRepository.getWaypointsForSet(1)).thenAnswer((_) async => segment01_02Waypoints);
 
       final result = await waypointService.getNextWaypoint(1, testLat, testLon);
@@ -541,7 +541,7 @@ void main() {
       final testLat = 39.44000;
       final testLon = -105.13300;
 
-      when(() => mockSettingsService.getMaxDistanceM()).thenReturn(5000);
+      when(() => mockSettingsService.getMaxSearchDistanceM()).thenReturn(5000);
       when(() => mockRepository.getWaypointsForSet(1)).thenAnswer((_) async => segment01_02Waypoints);
 
       final result = await waypointService.getNextWaypoint(1, testLat, testLon);
@@ -556,7 +556,7 @@ void main() {
       final testLat = 39.43200;
       final testLon = -105.12000;
 
-      when(() => mockSettingsService.getMaxDistanceM()).thenReturn(5000);
+      when(() => mockSettingsService.getMaxSearchDistanceM()).thenReturn(5000);
       when(() => mockRepository.getWaypointsForSet(1)).thenAnswer((_) async => segment01_02Waypoints);
 
       final result = await waypointService.getNextWaypoint(1, testLat, testLon);
@@ -571,7 +571,7 @@ void main() {
       final testLat = 39.49000;
       final testLon = -105.09000;
 
-      when(() => mockSettingsService.getMaxDistanceM()).thenReturn(5000);
+      when(() => mockSettingsService.getMaxSearchDistanceM()).thenReturn(5000);
       when(() => mockRepository.getWaypointsForSet(1)).thenAnswer((_) async => segment01_02Waypoints);
 
       final result = await waypointService.getNextWaypoint(1, testLat, testLon);
@@ -586,7 +586,7 @@ void main() {
       final testLat = 39.60000;
       final testLon = -105.00000;
 
-      when(() => mockSettingsService.getMaxDistanceM()).thenReturn(5000);
+      when(() => mockSettingsService.getMaxSearchDistanceM()).thenReturn(5000);
       when(() => mockRepository.getWaypointsForSet(1)).thenAnswer((_) async => segment01_02Waypoints);
 
       final result = await waypointService.getNextWaypoint(1, testLat, testLon);
@@ -596,10 +596,10 @@ void main() {
 
     test('returns null when user is past the last waypoint', () async {
       // Position south of 02-115TH (past the end of segment 2)
-      final testLat = 39.33000;
-      final testLon = -105.26000;
+      final testLat = 39.344286;
+      final testLon = -105.261613;
 
-      when(() => mockSettingsService.getMaxDistanceM()).thenReturn(5000);
+      when(() => mockSettingsService.getMaxSearchDistanceM()).thenReturn(5000);
       when(() => mockRepository.getWaypointsForSet(1)).thenAnswer((_) async => segment01_02Waypoints);
 
       final result = await waypointService.getNextWaypoint(1, testLat, testLon);
@@ -623,7 +623,7 @@ void main() {
     });
 
     test('user movement simulation - progresses through waypoints correctly', () async {
-      when(() => mockSettingsService.getMaxDistanceM()).thenReturn(5000);
+      when(() => mockSettingsService.getMaxSearchDistanceM()).thenReturn(5000);
       when(() => mockRepository.getWaypointsForSet(1)).thenAnswer((_) async => segment01_02Waypoints);
 
       // Position 1: At Waterton Canyon Trailhead
@@ -653,7 +653,7 @@ void main() {
       final testLat = 39.36000;
       final testLon = -105.24500;
 
-      when(() => mockSettingsService.getMaxDistanceM()).thenReturn(5000);
+      when(() => mockSettingsService.getMaxSearchDistanceM()).thenReturn(5000);
       when(() => mockRepository.getWaypointsForSet(1)).thenAnswer((_) async => segment01_02Waypoints);
 
       final result = await waypointService.getNextWaypoint(1, testLat, testLon);
@@ -668,7 +668,7 @@ void main() {
       final testLon = -105.12306; // At 01-066XT
 
       // With 1000m max, should only see very close waypoints
-      when(() => mockSettingsService.getMaxDistanceM()).thenReturn(1000);
+      when(() => mockSettingsService.getMaxSearchDistanceM()).thenReturn(1000);
       when(() => mockRepository.getWaypointsForSet(1)).thenAnswer((_) async => segment01_02Waypoints);
 
       final result = await waypointService.getNextWaypoint(1, testLat, testLon);
