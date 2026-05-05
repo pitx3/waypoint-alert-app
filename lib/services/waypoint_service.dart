@@ -93,7 +93,7 @@ class WaypointService {
     final waypointC = bIndex < allWaypoints.length - 1 ? allWaypoints[bIndex + 1] : null;
     
     // Calculate distances from current location
-    final distToB = _calculateDistance(currentLat, currentLon, closestB.latitude, closestB.longitude);
+    // final distToB = _calculateDistance(currentLat, currentLon, closestB.latitude, closestB.longitude);
     final distToA = waypointA != null 
       ? _calculateDistance(currentLat, currentLon, waypointA.latitude, waypointA.longitude)
       : double.infinity;
@@ -173,68 +173,29 @@ class WaypointService {
     double currentLat,
     double currentLon,
   ) async {
+    final nextWaypoint = await getNextWaypoint(setId, currentLat, currentLon);
     final allWaypoints = await repository.getWaypointsForSet(setId);
-    
-    // Filter to water only and sort by trail order
-    final waterWaypoints = allWaypoints
-        .where((wp) => wp.type.toLowerCase() == 'water')
+
+    if (allWaypoints.isEmpty) return null;
+
+    allWaypoints.sort((a,b) => a.name.compareTo(b.name));
+
+    List<Waypoint> aheadWaypoints;
+    if (nextWaypoint != null) {
+      aheadWaypoints = allWaypoints
+        .where((wp) => wp.name.compareTo(nextWaypoint.name) >= 0)
         .toList();
-    
-    if (waterWaypoints.isEmpty) return null;
-    
-    waterWaypoints.sort((a, b) => a.name.compareTo(b.name));
-    
-    // Find closest water
-    Waypoint? closestWater;
-    double minDistance = double.infinity;
-    
-    for (final wp in waterWaypoints) {
-      final distance = _calculateDistance(
-        currentLat,
-        currentLon,
-        wp.latitude,
-        wp.longitude,
-      );
-      
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestWater = wp;
-      }
+    } else {
+      return null;
     }
     
-    if (closestWater == null) return null;
+    final waterAhead = aheadWaypoints
+      .where((wp) => wp.type.toLowerCase() == 'water')
+      .toList();
     
-    // Find index of closest water
-    final waterIndex = waterWaypoints.indexWhere((wp) => wp.id == closestWater.id);
+    if (waterAhead.isEmpty) return null;
     
-    // Get next water after closest (if exists)
-    if (waterIndex < waterWaypoints.length - 1) {
-      final nextWater = waterWaypoints[waterIndex + 1];
-      
-      // Use triangle test to see if we've passed closestWater
-      final distToClosest = minDistance;
-      final distToNext = _calculateDistance(
-        currentLat,
-        currentLon,
-        nextWater.latitude,
-        nextWater.longitude,
-      );
-      final distBetween = getDistanceBetweenWaypoints(
-        waterWaypoints,
-        closestWater.name,
-        nextWater.name,
-      );
-      
-      // If distToNext < distBetween, we're approaching nextWater
-      if (distToNext < distBetween) {
-        return nextWater;
-      } else {
-        return closestWater;
-      }
-    }
-    
-    // No more water ahead
-    return closestWater;
+    return waterAhead.first;
   }
 
   /// Returns waypoints within maxDistance meters, sorted by distance

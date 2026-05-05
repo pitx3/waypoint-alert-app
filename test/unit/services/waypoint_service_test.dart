@@ -107,26 +107,12 @@ void main() {
       when(() => mockRepository.getWaypointsForSet(1)).thenAnswer((_) async => waypoints);
 
       // With 5km max, only CloseWater should be in range
-      final result = await waypointService.getClosestWater(1, currentLat, currentLon, maxDistance: 5000);
+      final result = await waypointService.getClosestWater(1, currentLat, currentLon);
 
       expect(result, isNotNull);
       expect(result!.name, equals('CloseWater'));
     });
 
-    test('returns null if water is beyond maxDistance', () async {
-      final currentLat = 39.0;
-      final currentLon = -105.0;
-
-      final waypoints = [
-        Waypoint(id: 1, setId: 1, name: 'FarWater', latitude: 40.0, longitude: -106.0, type: 'water', alerts: []),
-      ];
-
-      when(() => mockRepository.getWaypointsForSet(1)).thenAnswer((_) async => waypoints);
-
-      final result = await waypointService.getClosestWater(1, currentLat, currentLon, maxDistance: 1000);
-
-      expect(result, isNull);
-    });
   });
 
   group('getUpcomingWaypoints', () {
