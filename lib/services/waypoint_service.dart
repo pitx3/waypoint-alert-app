@@ -15,34 +15,41 @@ class WaypointService {
     required this.settingsService,
   });
 
+
+
+  /// Calculate distance between two waypoints by name
+  double getDistanceBetweenWaypoints(
+    List<Waypoint> allWaypoints,
+    String waypointName1,
+    String waypointName2,
+  ) {
+    final wp1 = allWaypoints.firstWhere((wp) => wp.name == waypointName1);
+    final wp2 = allWaypoints.firstWhere((wp) => wp.name == waypointName2);
+    
+    return _calculateDistance(
+      wp1.latitude,
+      wp1.longitude,
+      wp2.latitude,
+      wp2.longitude,
+    );
+  }
  
   // ==================== Query Operations for GPS Monitoring ====================
 
-  /// Returns the next waypoint ahead on the trail (closest waypoint in front)
-  Future<Waypoint?> getNextWaypoint(
+  /// Get the closest waypoint by distance
+  Future<Waypoint?> getClosestWaypoint(
     int setId,
     double currentLat,
     double currentLon,
   ) async {
-    final int maxDistance = settingsService.getMaxSearchDistanceM();
-
     final allWaypoints = await repository.getWaypointsForSet(setId);
-
-    final nearby = allWaypoints.where((wp) {
-      final distance = _calculateDistance(currentLat, currentLon, wp.latitude, wp.longitude);
-      return distance <= maxDistance;
-    }).toList();
-
-    if (nearby.isEmpty) return null;
     
-    // Sort by trail order (name)
-    nearby.sort((a, b) => a.name.compareTo(b.name));
+    if (allWaypoints.isEmpty) return null;
     
-    // Find minimum distance waypoint
-    Waypoint? minWaypoint;
+    Waypoint? closest;
     double minDistance = double.infinity;
     
-    for (final wp in nearby) {
+    for (final wp in allWaypoints) {
       final distance = _calculateDistance(
         currentLat,
         currentLon,
@@ -52,43 +59,182 @@ class WaypointService {
       
       if (distance < minDistance) {
         minDistance = distance;
-        minWaypoint = wp;
+        closest = wp;
       }
     }
     
-    return minWaypoint;
+    return closest;
   }
 
-  /// Returns the closest water waypoint within maxDistance meters
+
+  /// Get the next waypoint ahead on the trail
+  Future<Waypoint?> getNextWaypoint(
+    int setId,
+    double currentLat,
+    double currentLon,
+  ) async {
+    final allWaypoints = await repository.getWaypointsForSet(setId);
+    
+    if (allWaypoints.isEmpty) return null;
+    
+    // Sort by trail order (name)
+    allWaypoints.sort((a, b) => a.name.compareTo(b.name));
+    
+    // Find closest waypoint (B)
+    final closestB = await getClosestWaypoint(setId, currentLat, currentLon);
+    if (closestB == null) return null;
+    
+    // Find index of closest waypoint
+    final bIndex = allWaypoints.indexWhere((wp) => wp.id == closestB.id);
+    if (bIndex == -1) return null;
+    
+    // Get before (A) and after (C) waypoints
+    final waypointA = bIndex > 0 ? allWaypoints[bIndex - 1] : null;
+    final waypointC = bIndex < allWaypoints.length - 1 ? allWaypoints[bIndex + 1] : null;
+    
+    // Calculate distances from current location
+    final distToB = _calculateDistance(currentLat, currentLon, closestB.latitude, closestB.longitude);
+    final distToA = waypointA != null 
+      ? _calculateDistance(currentLat, currentLon, waypointA.latitude, waypointA.longitude)
+      : double.infinity;
+    final distToC = waypointC != null
+      ? _calculateDistance(currentLat, currentLon, waypointC.latitude, waypointC.longitude)
+      : double.infinity;
+    
+    // Calculate distances between waypoints
+    final distAB = waypointA != null 
+      ? getDistanceBetweenWaypoints(allWaypoints, waypointA.name, closestB.name)
+      : double.infinity;
+    final distBC = waypointC != null
+      ? getDistanceBetweenWaypoints(allWaypoints, closestB.name, waypointC.name)
+      : double.infinity;
+    
+    // Triangle inequality test:
+    // If distToA < distAB, we're before B (approaching from A's direction)
+    // If distToC < distBC, we're after B (approaching C)
+    final beforeB = distToA < distAB;
+    final afterB = distToC < distBC;
+    
+    // Determine which waypoint we're approaching
+    if (beforeB && !afterB) {
+      // We're between A and B, approaching B
+      return closestB;
+    } else if (afterB && !beforeB) {
+      // We're between B and C, approaching C
+      return waypointC;
+    } else if (!beforeB && !afterB) {
+      // We're at or very close to B
+      return closestB;
+    } else {
+      // Both true or both false = ambiguous (off trail or weird geometry)
+      // Default to returning closest
+      return closestB;
+    }
+  }
+
+
+  /// Get closest water waypoint (no distance limit)
   Future<Waypoint?> getClosestWater(
     int setId,
     double currentLat,
-    double currentLon, {
-    double maxDistance = 10000,
-  }) async {
-    final waypoints = await repository.getWaypointsForSet(setId);
-    final waterWaypoints = waypoints.where((w) => w.type.toLowerCase() == 'water');
-
+    double currentLon,
+  ) async {
+    final allWaypoints = await repository.getWaypointsForSet(setId);
+    
+    final waterWaypoints = allWaypoints.where((wp) => 
+      wp.type.toLowerCase() == 'water'
+    ).toList();
+    
     if (waterWaypoints.isEmpty) return null;
-
-    Waypoint? closest;
+    
+    Waypoint? closestWater;
     double minDistance = double.infinity;
-
-    for (final waypoint in waterWaypoints) {
+    
+    for (final wp in waterWaypoints) {
       final distance = _calculateDistance(
         currentLat,
         currentLon,
-        waypoint.latitude,
-        waypoint.longitude,
+        wp.latitude,
+        wp.longitude,
       );
-
-      if (distance < minDistance && distance <= maxDistance) {
+      
+      if (distance < minDistance) {
         minDistance = distance;
-        closest = waypoint;
+        closestWater = wp;
       }
     }
+    
+    return closestWater;
+  }
 
-    return closest;
+  /// Get next water waypoint ahead on trail
+  Future<Waypoint?> getNextWater(
+    int setId,
+    double currentLat,
+    double currentLon,
+  ) async {
+    final allWaypoints = await repository.getWaypointsForSet(setId);
+    
+    // Filter to water only and sort by trail order
+    final waterWaypoints = allWaypoints
+        .where((wp) => wp.type.toLowerCase() == 'water')
+        .toList();
+    
+    if (waterWaypoints.isEmpty) return null;
+    
+    waterWaypoints.sort((a, b) => a.name.compareTo(b.name));
+    
+    // Find closest water
+    Waypoint? closestWater;
+    double minDistance = double.infinity;
+    
+    for (final wp in waterWaypoints) {
+      final distance = _calculateDistance(
+        currentLat,
+        currentLon,
+        wp.latitude,
+        wp.longitude,
+      );
+      
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestWater = wp;
+      }
+    }
+    
+    if (closestWater == null) return null;
+    
+    // Find index of closest water
+    final waterIndex = waterWaypoints.indexWhere((wp) => wp.id == closestWater.id);
+    
+    // Get next water after closest (if exists)
+    if (waterIndex < waterWaypoints.length - 1) {
+      final nextWater = waterWaypoints[waterIndex + 1];
+      
+      // Use triangle test to see if we've passed closestWater
+      final distToClosest = minDistance;
+      final distToNext = _calculateDistance(
+        currentLat,
+        currentLon,
+        nextWater.latitude,
+        nextWater.longitude,
+      );
+      final distBetween = getDistanceBetweenWaypoints(
+        waterWaypoints,
+        closestWater.name,
+        nextWater.name,
+      );
+      
+      // If distToNext < distBetween, we're approaching nextWater
+      if (distToNext < distBetween) {
+        return nextWater;
+      } else {
+        return closestWater;
+      }
+    }
+    
+    // No more water ahead
+    return closestWater;
   }
 
   /// Returns waypoints within maxDistance meters, sorted by distance
@@ -121,6 +267,7 @@ class WaypointService {
     return sorted.map((e) => e.key).toList();
   }
 
+  // ==== Waypoint Set Operations ==== //
   Future<void> activateSet(int setId) async {
     // Deactivate all sets first
     final allSets = await repository.getAllSets();
