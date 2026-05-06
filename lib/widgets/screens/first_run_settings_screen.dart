@@ -1,9 +1,7 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:waypoint_alert_app/models/app_settings.dart';
+import 'package:waypoint_alert_app/services/location_service.dart';
 import 'package:waypoint_alert_app/services/settings_service.dart';
-import 'package:waypoint_alert_app/services/waypoint_repository.dart';
 import 'package:waypoint_alert_app/services/waypoint_service.dart';
 import 'package:waypoint_alert_app/widgets/cards/setting_card.dart';
 import 'package:waypoint_alert_app/constants/app_constants.dart';
@@ -13,11 +11,13 @@ import 'package:waypoint_alert_app/widgets/screens/home_screen.dart';
 class FirstRunSettingsScreen extends StatefulWidget {
   final SettingsService settingsService;
   final WaypointService waypointService;
+  final LocationService locationService;
 
   const FirstRunSettingsScreen({
     super.key, 
     required this.settingsService,
     required this.waypointService,
+    required this.locationService,
   });
 
   @override State<FirstRunSettingsScreen> createState() => _FirstRunSettingScreenState();
@@ -166,7 +166,11 @@ class _FirstRunSettingScreenState extends State<FirstRunSettingsScreen> {
     // Navigate to HomeScreen
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder: (context) => HomeScreen(settingsService: widget.settingsService, waypointService: widget.waypointService,)
+        builder: (context) => HomeScreen(
+            settingsService: widget.settingsService, 
+            waypointService: widget.waypointService,
+            locationService: widget.locationService,
+        )
       ),
     );
   }

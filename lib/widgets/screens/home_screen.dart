@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:waypoint_alert_app/models/water_info.dart';
+import 'package:waypoint_alert_app/services/location_service.dart';
 import 'package:waypoint_alert_app/services/settings_service.dart';
 import 'package:waypoint_alert_app/services/waypoint_service.dart';
 import 'package:waypoint_alert_app/widgets/banners/monitoring_banner.dart';
@@ -13,11 +14,13 @@ import 'package:waypoint_alert_app/utils/calculators.dart' as calc;
 class HomeScreen extends StatefulWidget {
   final SettingsService settingsService;
   final WaypointService waypointService;
+  final LocationService locationService;
 
   const HomeScreen({
     super.key,
     required this.settingsService,
     required this.waypointService,
+    required this.locationService,
   });
 
   @override
@@ -42,10 +45,9 @@ class _HomeScreenState extends State<HomeScreen> {
     final setId = widget.settingsService.getActiveSetId();
     if (setId == null) return;
 
-    // Get current location (TODO: replace with actual GPS when available)
-    // For now, use a default position (Segment 01 start)
-    const currentLat = 39.49127;
-    const currentLon = -105.09501;
+    // Get current location from service
+    final currentLat = widget.locationService.latitude;
+    final currentLon = widget.locationService.longitude;
 
     // Load water info
     final waterInfo = await widget.waypointService.getWaterInfo(

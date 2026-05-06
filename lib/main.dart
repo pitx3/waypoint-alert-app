@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:waypoint_alert_app/constants/app_constants.dart';
+import 'package:waypoint_alert_app/mocks/mock_location_service.dart';
 import 'package:waypoint_alert_app/services/isar_service.dart';
+import 'package:waypoint_alert_app/services/location_service.dart';
 import 'package:waypoint_alert_app/services/settings_service.dart';
 import 'package:waypoint_alert_app/services/waypoint_repository.dart';
 import 'package:waypoint_alert_app/services/waypoint_service.dart';
@@ -19,11 +21,14 @@ void main() async {
     repository: repository,
     settingsService: settingsService,
   );
+  // TODO: Switch this for a real location service for production use
+  final locationService = MockLocationService();
   
   runApp(WaypointAlertApp(
     isarService: isarService,
     settingsService: settingsService,
     waypointService: waypointService,
+    locationService: locationService,
   ));
 }
 
@@ -31,12 +36,14 @@ class WaypointAlertApp extends StatelessWidget {
   final IsarService isarService;
   final SettingsService settingsService;
   final WaypointService waypointService;
+  final LocationService locationService;
   
   const WaypointAlertApp({
     super.key,
     required this.isarService,
     required this.settingsService,
     required this.waypointService,
+    required this.locationService,
   });
   
   @override
@@ -63,11 +70,13 @@ class WaypointAlertApp extends StatelessWidget {
       return FirstRunSettingsScreen(
         settingsService: settingsService,
         waypointService: waypointService,
+        locationService: locationService,
       );
     }
     return HomeScreen(
       settingsService: settingsService,
       waypointService: waypointService,
+      locationService: locationService,
     );
   }
 }
