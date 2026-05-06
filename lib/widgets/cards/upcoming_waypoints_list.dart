@@ -96,7 +96,7 @@ class _IconForType extends StatelessWidget {
       case 'junction':
         return Icons.signpost;  // alternatives: assistant_direction, assistant_navigation, call_split, foloow_the_signs, fork_left, fork_right,
       default:
-        return Icons.place;  // al
+        return Icons.place;  
     }
   }
 

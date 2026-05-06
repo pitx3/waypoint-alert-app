@@ -73,7 +73,7 @@ class NextWaypointCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        (bearing == null) ? '--' : '${bearing!.toStringAsFixed(0)}°',
+                        '${bearing!.toStringAsFixed(0)}°',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 12,
