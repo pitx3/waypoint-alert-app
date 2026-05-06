@@ -8,6 +8,8 @@ import 'package:waypoint_alert_app/widgets/cards/closest_water_card.dart';
 import 'package:waypoint_alert_app/widgets/cards/next_waypoint_card.dart';
 import 'package:waypoint_alert_app/widgets/cards/upcoming_waypoints_list.dart';
 
+import 'package:waypoint_alert_app/utils/calculators.dart' as calc;
+
 class HomeScreen extends StatefulWidget {
   final SettingsService settingsService;
   final WaypointService waypointService;
@@ -27,10 +29,8 @@ class _HomeScreenState extends State<HomeScreen> {
   WaterInfo? _waterInfo;
   String? _activeSetName;
   int? _activeSetCount;
-  String? _nextWaypointName;
-  double? _nextWaypointDistance;
-  double? _nextWaypointBearing;
   List<UpcomingWaypoint> _upcomingWaypoints = [];
+  UpcomingWaypoint? _nextWaypoint;
 
   @override
   void initState() {
@@ -39,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _loadData() async {
-    final setId = widget.settingsService.activeSetId;
+    final setId = widget.settingsService.getActiveSetId();
     if (setId == null) return;
 
     // Get current location (TODO: replace with actual GPS when available)
@@ -54,29 +54,6 @@ class _HomeScreenState extends State<HomeScreen> {
       currentLon,
     );
 
-    // Load next waypoint
-    final nextWaypoint = await widget.waypointService.getNextWaypoint(
-      setId,
-      currentLat,
-      currentLon,
-    );
-    double? nextDistance;
-    double? nextBearing;
-    if (nextWaypoint != null) {
-      nextDistance = widget.waypointService.calculateDistance(
-        currentLat,
-        currentLon,
-        nextWaypoint.latitude,
-        nextWaypoint.longitude,
-      );
-      nextBearing = widget.waypointService.calculateBearing(
-        currentLat,
-        currentLon,
-        nextWaypoint.latitude,
-        nextWaypoint.longitude,
-      );
-    }
-
     // Load upcoming waypoints
     final upcomingList = await widget.waypointService.getUpcomingWaypoints(
       setId,
@@ -84,19 +61,24 @@ class _HomeScreenState extends State<HomeScreen> {
       currentLon,
     );
     final upcomingWaypoints = upcomingList.map((wp) {
-      final distance = widget.waypointService.calculateDistance(
+      final distance = calc.calculateDistance(
         currentLat,
         currentLon,
         wp.latitude,
         wp.longitude,
       );
+      final bearing = calc.calculateBearing(currentLat, currentLon, wp.latitude, wp.longitude);
       return UpcomingWaypoint(
         name: wp.name,
         distanceKm: distance / 1000,
+        bearing: bearing,
         type: wp.type,
         alertCount: wp.alerts.length,
       );
     }).toList();
+
+    // Get next waypoint (if any)
+    final nextWaypoint = (upcomingWaypoints.length > 0) ? upcomingWaypoints[0] : null;
 
     // Get active set info
     final allWaypoints = await widget.waypointService.repository
@@ -109,10 +91,8 @@ class _HomeScreenState extends State<HomeScreen> {
       _waterInfo = waterInfo;
       _activeSetName = setName;
       _activeSetCount = allWaypoints.length;
-      _nextWaypointName = nextWaypoint?.name;
-      _nextWaypointDistance = nextDistance;
-      _nextWaypointBearing = nextBearing;
       _upcomingWaypoints = upcomingWaypoints;
+      _nextWaypoint = nextWaypoint;
     });
   }
 
@@ -165,13 +145,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     const SizedBox(height: 16),
-                    if (_nextWaypointName != null)
+                    if (_nextWaypoint != null)
                       NextWaypointCard(
-                        name: _nextWaypointName!,
-                        distanceKm: _nextWaypointDistance != null
-                            ? _nextWaypointDistance! / 1000
-                            : null,
-                        bearing: _nextWaypointBearing,
+                        name: _nextWaypoint!.name,
+                        distanceKm: _nextWaypoint!.distanceKm,
+                        bearing: _nextWaypoint!.bearing,
                       )
                     else
                       const Card(
@@ -240,17 +218,3 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// Simple data class for upcoming waypoints list
-class UpcomingWaypoint {
-  final String name;
-  final double distanceKm;
-  final String type;
-  final int alertCount;
-
-  const UpcomingWaypoint({
-    required this.name,
-    required this.distanceKm,
-    required this.type,
-    required this.alertCount,
-  });
-}

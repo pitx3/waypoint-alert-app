@@ -14,7 +14,7 @@ void main() async {
   await isarService.init();
   
   final settingsService = await SettingsService.create();
-  final repository = WaypointRepository(isarService: isarService);
+  final repository = WaypointRepository(isarService: isarService, settingsService: settingsService);
   final waypointService = WaypointService(
     repository: repository,
     settingsService: settingsService,
@@ -60,7 +60,10 @@ class WaypointAlertApp extends StatelessWidget {
   
   Widget _buildHome() {
     if (settingsService.isFirstRun || AppConstants.debugResetFirstRun) {
-      return FirstRunSettingsScreen(settingsService: settingsService);
+      return FirstRunSettingsScreen(
+        settingsService: settingsService,
+        waypointService: waypointService,
+      );
     }
     return HomeScreen(
       settingsService: settingsService,

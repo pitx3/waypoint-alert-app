@@ -600,7 +600,7 @@ void main() {
       final result = await waypointService.getWaterInfo(99, 39.45, -105.13);
 
       expect(result.closestWater, isNull);
-      expect(result.closestDitanceMeters, isNull);
+      expect(result.closestDistanceMeters, isNull);
       expect(result.closestBearing, isNull);
       expect(result.isClosestBehind, isFalse);
       expect(result.nextWaterAhead, isNull);

@@ -1,11 +1,8 @@
-// lib/services/waypoint_service.dart
-
-import 'dart:math' as math;
-
 import 'package:waypoint_alert_app/models/water_info.dart';
 import 'package:waypoint_alert_app/models/waypoint.dart';
 import 'package:waypoint_alert_app/services/settings_service.dart';
 import 'package:waypoint_alert_app/services/waypoint_repository.dart';
+import 'package:waypoint_alert_app/utils/calculators.dart' as calc;
 
 class WaypointService {
   final SettingsService settingsService;
@@ -27,7 +24,7 @@ class WaypointService {
     final wp1 = allWaypoints.firstWhere((wp) => wp.name == waypointName1);
     final wp2 = allWaypoints.firstWhere((wp) => wp.name == waypointName2);
     
-    return _calculateDistance(
+    return calc.calculateDistance(
       wp1.latitude,
       wp1.longitude,
       wp2.latitude,
@@ -51,7 +48,7 @@ class WaypointService {
     double minDistance = double.infinity;
     
     for (final wp in allWaypoints) {
-      final distance = _calculateDistance(
+      final distance = calc.calculateDistance(
         currentLat,
         currentLon,
         wp.latitude,
@@ -96,10 +93,10 @@ class WaypointService {
     // Calculate distances from current location
     // final distToB = _calculateDistance(currentLat, currentLon, closestB.latitude, closestB.longitude);
     final distToA = waypointA != null 
-      ? _calculateDistance(currentLat, currentLon, waypointA.latitude, waypointA.longitude)
+      ? calc.calculateDistance(currentLat, currentLon, waypointA.latitude, waypointA.longitude)
       : double.infinity;
     final distToC = waypointC != null
-      ? _calculateDistance(currentLat, currentLon, waypointC.latitude, waypointC.longitude)
+      ? calc.calculateDistance(currentLat, currentLon, waypointC.latitude, waypointC.longitude)
       : double.infinity;
     
     // Calculate distances between waypoints
@@ -154,12 +151,12 @@ class WaypointService {
     final closestWater = await getClosestWater(setId, currentLat, currentLon);
 
     if (closestWater == null) {
-      return WaterInfo(closestWater: null, closestDitanceMeters: null, closestBearing: null);
+      return WaterInfo(closestWater: null, closestDistanceMeters: null, closestBearing: null);
     }
 
     // get distance and bearinf for closest water
-    final closestDistance = _calculateDistance(currentLat, currentLon, closestWater.latitude, closestWater.longitude);
-    final closestBearing = _getBearing(currentLat, currentLon, closestWater.latitude, closestWater.longitude);
+    final closestDistance = calc.calculateDistance(currentLat, currentLon, closestWater.latitude, closestWater.longitude);
+    final closestBearing = calc.calculateBearing(currentLat, currentLon, closestWater.latitude, closestWater.longitude);
 
     final nextWaterAhead = await getNextWater(setId, currentLat, currentLon);
 
@@ -169,13 +166,13 @@ class WaypointService {
     double? nextWaterDistance;
     double? nextWaterBearing;
     if (isClosestBehind && nextWaterAhead != null) {
-      nextWaterDistance = _calculateDistance(currentLat, currentLon, nextWaterAhead.latitude, nextWaterAhead.longitude);
-      nextWaterBearing = _getBearing(currentLat, currentLon, nextWaterAhead.latitude, nextWaterAhead.longitude);
+      nextWaterDistance = calc.calculateDistance(currentLat, currentLon, nextWaterAhead.latitude, nextWaterAhead.longitude);
+      nextWaterBearing = calc.calculateBearing(currentLat, currentLon, nextWaterAhead.latitude, nextWaterAhead.longitude);
     }
 
     return WaterInfo(
       closestWater: closestWater,
-      closestDitanceMeters: closestDistance, 
+      closestDistanceMeters: closestDistance, 
       closestBearing: closestBearing,
       isClosestBehind: isClosestBehind,
       nextWaterAhead: isClosestBehind ? nextWaterAhead : null,
@@ -203,7 +200,7 @@ class WaypointService {
     double minDistance = double.infinity;
     
     for (final wp in waterWaypoints) {
-      final distance = _calculateDistance(
+      final distance = calc.calculateDistance(
         currentLat,
         currentLon,
         wp.latitude,
@@ -275,7 +272,7 @@ class WaypointService {
     final upcoming = <Waypoint>[];
     for (var i = startIndex; i < allWaypoints.length; i++) {
       final waypoint = allWaypoints[i];
-      final distance = _calculateDistance(currentLat, currentLon, waypoint.latitude, waypoint.longitude);
+      final distance = calc.calculateDistance(currentLat, currentLon, waypoint.latitude, waypoint.longitude);
 
       if (distance <= maxDistance) {
         upcoming.add(waypoint);
@@ -312,53 +309,5 @@ class WaypointService {
   }
 
 
-  // ==================== Utility ====================
-
-  /// Calculate distance between two coordinates using Haversine formula
-  /// Returns distance in meters
-  double _calculateDistance(
-    double lat1,
-    double lon1,
-    double lat2,
-    double lon2,
-  ) {
-    const earthRadius = 6371000; // meters
-
-    final dLat = _toRadians(lat2 - lat1);
-    final dLon = _toRadians(lon2 - lon1);
-
-    final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
-        math.cos(_toRadians(lat1)) *
-        math.cos(_toRadians(lat2)) *
-        math.sin(dLon / 2) *
-        math.sin(dLon / 2);
-
-    final c = 2 * math.asin(math.sqrt(a));
-    return earthRadius * c;
-  }
-
-  double _getBearing(
-    double fromLat,
-    double fromLon,
-    double toLat,
-    double toLon,
-  ) {
-    final lat1 = _toRadians(fromLat);
-    final lat2 = _toRadians(toLat);
-    final dLon = _toRadians(toLon - fromLon);
-
-    final y = math.sin(dLon) * math.cos(lat2);
-    final x = math.cos(lat1) * math.sin(lat2) - math.sin(lat1) * math.cos(lat2) * math.cos(dLon);
-
-    // atan2 handles x=0 gracefully
-    final bearingRad = math.atan2(y, x);
-    final bearingDeg = _toDegrees(bearingRad);
-
-    // normalize to 0-360 and return
-    return (bearingDeg + 360) % 360;
-  }
-
-
-  double _toRadians(double degrees) => degrees * (math.pi / 180.0);
-  double _toDegrees(double radians) => radians * (180.0 / math.pi);
+ 
 }

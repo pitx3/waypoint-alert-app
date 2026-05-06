@@ -2,7 +2,7 @@ import 'package:waypoint_alert_app/models/waypoint.dart';
 
 class WaterInfo {
   final Waypoint? closestWater;
-  final double? closestDitanceMeters;
+  final double? closestDistanceMeters;
   final double? closestBearing;
   final bool isClosestBehind; // true if closest water is behind us
   final Waypoint? nextWaterAhead; // only populated if closest is behind
@@ -11,7 +11,7 @@ class WaterInfo {
 
   WaterInfo({
     required this.closestWater,
-    required this.closestDitanceMeters,
+    required this.closestDistanceMeters,
     required this.closestBearing,
     this.isClosestBehind = false,
     this.nextWaterAhead,

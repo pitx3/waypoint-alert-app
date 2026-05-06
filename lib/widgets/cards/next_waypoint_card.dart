@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 class NextWaypointCard extends StatelessWidget {
   final String name;
   final double distanceKm;
-  final double? bearing;
+  final double bearing;
 
   const NextWaypointCard({
     super.key,
     required this.name,
     required this.distanceKm,
-    this.bearing,
+    required this.bearing,
   });
 
   @override

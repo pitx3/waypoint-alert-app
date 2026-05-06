@@ -157,12 +157,14 @@ class _EmptyState extends StatelessWidget {
 class UpcomingWaypoint {
   final String name;
   final double distanceKm;
+  final double bearing;
   final String type;
   final int alertCount;
 
   const UpcomingWaypoint({
     required this.name,
     required this.distanceKm,
+    required this.bearing,
     required this.type,
     required this.alertCount,
   });
