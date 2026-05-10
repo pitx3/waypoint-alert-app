@@ -49,7 +49,10 @@ class _ClosestWaterCardState extends State<ClosestWaterCard> {
       );
     }
 
+    final bgColor = water.isClosestBehind ? Colors.blue[800] : Color(0xFF1A1A2E);
+
     return Card(
+      color: bgColor,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -100,6 +103,7 @@ class _ClosestWaterCardState extends State<ClosestWaterCard> {
         : _formatDistance(distance);
 
     return Row(
+      // color: bgColor,
       children: [
         directionIcon,
         const SizedBox(width: 8),
@@ -138,6 +142,17 @@ class _ClosestWaterCardState extends State<ClosestWaterCard> {
             ],
           ),
         ),
+        // Notes on the right
+        if (waypoint.notes != null && waypoint.notes!.isNotEmpty) ...[
+          const SizedBox(width: 12),
+          Flexible(
+            child: Text(
+              waypoint.notes!,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
       ],
     );
   }

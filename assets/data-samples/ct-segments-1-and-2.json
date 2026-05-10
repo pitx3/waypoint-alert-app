@@ -24,6 +24,7 @@
       "latitude": 39.47043,
       "longitude": -105.1353,
       "type": "water",
+      "notes": "Need 0.5L of water",
       "alerts": [
         {"distanceMeters": 500, "priority": "normal"},
         {"distanceMeters": 300, "priority": "normal"},
@@ -91,6 +92,7 @@
       "latitude": 39.41959,
       "longitude": -105.12433,
       "type": "water",
+      "notes": "Need 2.5L of water",
       "alerts": [
         {"distanceMeters": 500, "priority": "normal"},
         {"distanceMeters": 300, "priority": "normal"},
@@ -171,7 +173,7 @@
     },
     {
       "id": 17,
-      "name": "02-001XR",
+      "name": "02-001WT",
       "sortOrder": 17,
       "latitude": 39.40021,
       "longitude": -105.16831,
