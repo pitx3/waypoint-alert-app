@@ -17,8 +17,8 @@ void main() {
     testWidgets('displays list of upcoming waypoints', (tester) async {
       final double maxDistanceKm = 10.0;
       final waypoints = [
-        const UpcomingWaypoint(name: 'Water Source', distanceKm: 2.1, type: 'water', bearing: 90, alertCount: 3,),
-        const UpcomingWaypoint(name: 'Trailhead', distanceKm: 5.4, type: 'trailhead', bearing: 120, alertCount: 1,),
+        const UpcomingWaypoint(name: 'Water Source', distanceKm: 2.1, type: 'water', bearing: 90, alertCount: 3, notes: ''),
+        const UpcomingWaypoint(name: 'Trailhead', distanceKm: 5.4, type: 'trailhead', bearing: 120, alertCount: 1, notes: ''),
       ];
 
       await tester.pumpWidget(_buildScaffold(waypoints: waypoints, maxDistanceKm: maxDistanceKm));
@@ -37,7 +37,7 @@ void main() {
 
     testWidgets('display alert count chips', (tester) async {
       final waypoints = [
-        const UpcomingWaypoint(name: 'Camp Site', distanceKm: 8.7, type: 'camp', bearing: 310, alertCount: 3,),
+        const UpcomingWaypoint(name: 'Camp Site', distanceKm: 8.7, type: 'camp', bearing: 310, alertCount: 3, notes: ''),
       ];
     
       await tester.pumpWidget(_buildScaffold(waypoints: waypoints, maxDistanceKm: 10));

@@ -9,6 +9,7 @@ void main() {
   "waypoints": [
     {
       "name": "Test Waypoint",
+      "sortOrder": 1,
       "latitude": 39.5,
       "longitude": -106.5,
       "type": "water",
@@ -27,6 +28,7 @@ void main() {
 
       expect(waypoints.length, 1, reason: 'Should parse exactly one waypoint');
       expect(waypoints.first.name, 'Test Waypoint');
+      expect(waypoints.first.sortOrder, 1);
       expect(waypoints.first.setId, 42);
       expect(waypoints.first.alerts.length, 1);
       expect(waypoints.first.alerts.first.distanceMeters, 500);
