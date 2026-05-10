@@ -1,21 +1,28 @@
 import 'dart:async';
 import 'package:waypoint_alert_app/services/location_service.dart';
 
+typedef LatLon = ({double lat, double lon});
+
 /// Mock location service for development/testing
 /// 
-/// **TO CHANGE LOCATION:** Edit the hardcoded coordinates below and hot reload
-/// // Current location: CT Segment 01 start (default)
+/// **TO CHANGE LOCATION:** Edit the currentLocationName string
 class MockLocationService implements LocationService {
-  // =========== EDIT THESE VALUES ==============
-  static const double mockLatitude = 39.49127;
-  static const double mockLongitude = -105.09501;
-  // =========== END EDITABLE SECTION ===========
+  // ========== EDIT THIS NAME ==================
+  static const String currentLocationName = 'nearSection1End';
+  // ========== END EDIT SECTION ================
+
+  static const Map<String, LatLon> _locations = {
+    'segment01Start': (lat: 39.49127, lon: -105.09501),
+    'pastFirstWater': (lat: 39.46894, lon: -105.13403),
+    'nearSection1End': (lat: 39.40195, lon: -105.16482),
+  };
+
 
   @override
-  double get latitude => mockLatitude;
+  double get latitude => _locations[currentLocationName]!.lat;
 
   @override
-  double get longitude => mockLongitude;
+  double get longitude => _locations[currentLocationName]!.lon;
 
   @override
   Stream<LocationUpdate> get locationStream {

@@ -25,7 +25,7 @@ class MonitoringBanner extends StatelessWidget {
       child: Container(
         width: double.infinity,
         color: color,
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 18),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 18),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

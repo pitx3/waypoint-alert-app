@@ -19,35 +19,22 @@ class ActiveSetCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       child: Card(
         child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
             children: [
-              Row(
-                children: [
-                  const Icon(Icons.folder, size: 20),
-                  const SizedBox(width: 8),
-                  const Text(
-                    'Active Set',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text (
-                setName,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+              const Icon(Icons.folder, size: 20),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  setName,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const SizedBox(height: 4),
-              Text (
-                '$waypointCount waypoints loaded',
-                style: const TextStyle(fontSize: 14)
+              const SizedBox(width: 12),
+              Text(
+                '$waypointCount',
+                style: const TextStyle(fontSize: 14, color: Colors.grey),
               ),
             ],
           ),

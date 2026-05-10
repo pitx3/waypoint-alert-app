@@ -29,6 +29,7 @@ void main() {
       final waypoint = Waypoint(
         id: 1,
         setId: 1,
+        sortOrder: 1,
         name: '01-033WT',
         latitude: 39.47043,
         longitude: -105.1353,
@@ -67,6 +68,7 @@ void main() {
       final closestWaypoint = Waypoint(
         id: 1,
         setId: 1,
+        sortOrder: 1,
         name: '01-033WT',
         latitude: 39.47043,
         longitude: -105.1353,
@@ -77,6 +79,7 @@ void main() {
       final nextWaypoint = Waypoint(
         id: 2,
         setId: 1,
+        sortOrder: 2,
         name: '01-091WT',
         latitude: 39.41959,
         longitude: -105.12433,
@@ -123,6 +126,7 @@ void main() {
       final waypoint = Waypoint(
         id: 1,
         setId: 1,
+        sortOrder: 1,
         name: 'TEST',
         latitude: 39.0,
         longitude: -105.0,

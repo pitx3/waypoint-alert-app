@@ -8,6 +8,9 @@ class Waypoint {
   int setId;
 
   @Index()
+  int sortOrder;
+
+  @Index()
   String name;
 
   @Index()
@@ -26,6 +29,7 @@ class Waypoint {
   Waypoint({
     this.id = Isar.autoIncrement,
     required this.setId,
+    required this.sortOrder,
     required this.name,
     required this.latitude,
     required this.longitude,
@@ -39,6 +43,7 @@ class Waypoint {
   Waypoint copyWith({
     int? id,
     int? setId,
+    int? sortOrder,
     String? name,
     double? latitude,
     double? longitude,
@@ -51,6 +56,7 @@ class Waypoint {
     return Waypoint(
       id: id ?? this.id,
       setId: setId ?? this.setId,
+      sortOrder: sortOrder ?? this.sortOrder,
       name: name ?? this.name,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
@@ -65,6 +71,7 @@ class Waypoint {
   factory Waypoint.fromJson(Map<String, dynamic> json) => Waypoint(
     id: json['id'] ?? Isar.autoIncrement,
     setId: json['setId'] ?? 0,
+    sortOrder: json['sortOrder'],
     name: json['name'],
     latitude: json['latitude'],
     longitude: json['longitude'],

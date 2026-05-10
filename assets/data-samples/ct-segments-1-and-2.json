@@ -8,6 +8,7 @@
     {
       "id": 1,
       "name": "01-000TH",
+      "sortOrder": 1,
       "latitude": 39.49127,
       "longitude": -105.09501,
       "type": "trailhead",
@@ -17,20 +18,9 @@
       ]
     },
     {
-      "id": 2,
-      "name": "01-100WT",
-      "latitude": 39.41021,
-      "longitude": -105.13074,
-      "type": "water",
-      "alerts": [
-        {"distanceMeters": 500, "priority": "normal"},
-        {"distanceMeters": 300, "priority": "normal"},
-        {"distanceMeters": 100, "priority": "normal"}
-      ]
-    },
-    {
       "id": 3,
       "name": "01-033WT",
+      "sortOrder": 2,
       "latitude": 39.47043,
       "longitude": -105.1353,
       "type": "water",
@@ -43,6 +33,7 @@
     {
       "id": 4,
       "name": "01-066XT",
+      "sortOrder": 3,
       "latitude": 39.43476,
       "longitude": -105.12306,
       "type": "crossing",
@@ -51,6 +42,7 @@
     {
       "id": 5,
       "name": "01-068OP",
+      "sortOrder": 4,
       "latitude": 39.43364,
       "longitude": -105.12059,
       "type": "other",
@@ -59,6 +51,7 @@
     {
       "id": 6,
       "name": "01-070XR",
+      "sortOrder": 5,
       "latitude": 39.43065,
       "longitude": -105.11882,
       "type": "crossing",
@@ -67,6 +60,7 @@
     {
       "id": 7,
       "name": "01-071XT",
+      "sortOrder": 6,
       "latitude": 39.42876,
       "longitude": -105.11957,
       "type": "crossing",
@@ -75,6 +69,7 @@
     {
       "id": 8,
       "name": "01-082XT",
+      "sortOrder": 7,
       "latitude": 39.42407,
       "longitude": -105.12075,
       "type": "crossing",
@@ -83,6 +78,7 @@
     {
       "id": 9,
       "name": "01-083FT",
+      "sortOrder": 8,
       "latitude": 39.42404,
       "longitude": -105.12089,
       "type": "trail",
@@ -91,6 +87,7 @@
     {
       "id": 10,
       "name": "01-091WT",
+      "sortOrder": 9,
       "latitude": 39.41959,
       "longitude": -105.12433,
       "type": "water",
@@ -103,14 +100,30 @@
     {
       "id": 11,
       "name": "01-099XT",
+      "sortOrder": 10,
       "latitude": 39.41334,
       "longitude": -105.12566,
       "type": "crossing",
       "alerts": []
     },
     {
+      "id": 2,
+      "name": "01-100WT",
+      "sortOrder": 11,
+      "latitude": 39.41021,
+      "longitude": -105.13074,
+      "type": "water",
+      "notes": "Need 0.5L of water",
+      "alerts": [
+        {"distanceMeters": 500, "priority": "normal"},
+        {"distanceMeters": 300, "priority": "normal"},
+        {"distanceMeters": 100, "priority": "normal"}
+      ]
+    },
+    {
       "id": 12,
       "name": "01-105XT",
+      "sortOrder": 12,
       "latitude": 39.40783,
       "longitude": -105.12981,
       "type": "crossing",
@@ -119,6 +132,7 @@
     {
       "id": 13,
       "name": "01-112RT",
+      "sortOrder": 13,
       "latitude": 39.4112,
       "longitude": -105.13418,
       "type": "trail",
@@ -127,6 +141,7 @@
     {
       "id": 14,
       "name": "01-131RT",
+      "sortOrder": 14,
       "latitude": 39.40581,
       "longitude": -105.15287,
       "type": "trail",
@@ -135,14 +150,17 @@
     {
       "id": 15,
       "name": "01-999XT",
+      "sortOrder": 15,
       "latitude": 39.40051,
       "longitude": -105.16767,
-      "type": "crossing",
+      "type": "junction",
+      "notes": "End of Segment 1",
       "alerts": []
     },
     {
       "id": 16,
       "name": "02-000TH",
+      "sortOrder": 16,
       "latitude": 39.40018,
       "longitude": -105.16831,
       "type": "trailhead",
@@ -154,14 +172,17 @@
     {
       "id": 17,
       "name": "02-001XR",
+      "sortOrder": 17,
       "latitude": 39.40021,
       "longitude": -105.16831,
-      "type": "crossing",
+      "type": "water",
+      "notes": "Need 2.0L of water",
       "alerts": []
     },
     {
       "id": 18,
       "name": "02-020XL",
+      "sortOrder": 18,
       "latitude": 39.40021,
       "longitude": -105.18549,
       "type": "trail",
@@ -170,6 +191,7 @@
     {
       "id": 19,
       "name": "02-041XT",
+      "sortOrder": 19,
       "latitude": 39.40553,
       "longitude": -105.21392,
       "type": "crossing",
@@ -178,6 +200,7 @@
     {
       "id": 20,
       "name": "02-058XT",
+      "sortOrder": 20,
       "latitude": 39.40051,
       "longitude": -105.23238,
       "type": "crossing",
@@ -186,6 +209,7 @@
     {
       "id": 21,
       "name": "02-062XL",
+      "sortOrder": 21,
       "latitude": 39.39921,
       "longitude": -105.23433,
       "type": "trail",
@@ -194,6 +218,7 @@
     {
       "id": 22,
       "name": "02-072XT",
+      "sortOrder": 22,
       "latitude": 39.38683,
       "longitude": -105.24017,
       "type": "crossing",
@@ -202,6 +227,7 @@
     {
       "id": 23,
       "name": "02-080XT",
+      "sortOrder": 23,
       "latitude": 39.37951,
       "longitude": -105.2393,
       "type": "crossing",
@@ -210,6 +236,7 @@
     {
       "id": 24,
       "name": "02-099OP",
+      "sortOrder": 24,
       "latitude": 39.35984,
       "longitude": -105.24556,
       "type": "other",
@@ -218,6 +245,7 @@
     {
       "id": 25,
       "name": "02-099WT",
+      "sortOrder": 25,
       "latitude": 39.36159,
       "longitude": -105.24496,
       "type": "water",
@@ -230,6 +258,7 @@
     {
       "id": 26,
       "name": "02-099XL",
+      "sortOrder": 26,
       "latitude": 39.35984,
       "longitude": -105.24556,
       "type": "trail",
@@ -238,6 +267,7 @@
     {
       "id": 27,
       "name": "02-100XX",
+      "sortOrder": 27,
       "latitude": 39.35867,
       "longitude": -105.2457,
       "type": "crossing",
@@ -246,6 +276,7 @@
     {
       "id": 28,
       "name": "02-100XX",
+      "sortOrder": 28,
       "latitude": 39.35627,
       "longitude": -105.24644,
       "type": "crossing",
@@ -254,6 +285,7 @@
     {
       "id": 29,
       "name": "02-102XT",
+      "sortOrder": 29,
       "latitude": 39.35627,
       "longitude": -105.24644,
       "type": "crossing",
@@ -262,6 +294,7 @@
     {
       "id": 30,
       "name": "02-105XL",
+      "sortOrder": 30,
       "latitude": 39.35678,
       "longitude": -105.25073,
       "type": "trail",
@@ -270,6 +303,7 @@
     {
       "id": 31,
       "name": "02-106MS",
+      "sortOrder": 31,
       "latitude": 39.3561,
       "longitude": -105.25136,
       "type": "trail",
@@ -278,6 +312,7 @@
     {
       "id": 32,
       "name": "02-115TH",
+      "sortOrder": 32,
       "latitude": 39.34585,
       "longitude": -105.257,
       "type": "trailhead",

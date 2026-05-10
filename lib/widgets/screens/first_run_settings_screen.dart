@@ -1,7 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+
 import 'package:waypoint_alert_app/models/app_settings.dart';
 import 'package:waypoint_alert_app/services/location_service.dart';
 import 'package:waypoint_alert_app/services/settings_service.dart';
+import 'package:waypoint_alert_app/services/waypoint_parser.dart';
+import 'package:waypoint_alert_app/services/waypoint_repository.dart';
 import 'package:waypoint_alert_app/services/waypoint_service.dart';
 import 'package:waypoint_alert_app/widgets/cards/setting_card.dart';
 import 'package:waypoint_alert_app/constants/app_constants.dart';
@@ -12,12 +19,14 @@ class FirstRunSettingsScreen extends StatefulWidget {
   final SettingsService settingsService;
   final WaypointService waypointService;
   final LocationService locationService;
+  final WaypointRepository repository;
 
   const FirstRunSettingsScreen({
     super.key, 
     required this.settingsService,
     required this.waypointService,
     required this.locationService,
+    required this.repository,
   });
 
   @override State<FirstRunSettingsScreen> createState() => _FirstRunSettingScreenState();
@@ -30,6 +39,10 @@ class _FirstRunSettingScreenState extends State<FirstRunSettingsScreen> {
   int? _walkingSpeedMetersPerMinute;
   int? _defaultAlertDistanceMeters;
 
+  bool _isLoading = false;
+  String? _loadError;
+
+  
   @override Widget build(BuildContext context) {
     AppSettings appSettings = widget.settingsService.getSettings();
 
@@ -95,6 +108,24 @@ class _FirstRunSettingScreenState extends State<FirstRunSettingsScreen> {
               ),
 
               const SizedBox(height: 16),
+
+              if (kDebugMode) ...[
+                if (_isLoading) 
+                  const CircularProgressIndicator()
+                else
+                  ElevatedButton(onPressed: _loadSampleData, child: const Text('Load Sample Data (Debug)'),),
+
+                if (_loadError != null) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    _loadError!,
+                    style: const TextStyle(color: Colors.red, fontSize: 12),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+                const SizedBox(height: 24),
+              
+              ],
   
               // Continue Button
               ElevatedButton(
@@ -132,7 +163,7 @@ class _FirstRunSettingScreenState extends State<FirstRunSettingsScreen> {
   }
 
   void _editWalkingSpeed(BuildContext context) async {
- final newValue = await showIntSettingDialog(
+  final newValue = await showIntSettingDialog(
       context: context, 
       title: 'Walking Speed', 
       currentValue: _walkingSpeedMetersPerMinute ?? AppConstants.defaultWalkingSpeedMpm, 
@@ -147,7 +178,7 @@ class _FirstRunSettingScreenState extends State<FirstRunSettingsScreen> {
     }  }
 
   void _editAlertDistance(BuildContext context) async {
- final newValue = await showIntSettingDialog(
+  final newValue = await showIntSettingDialog(
       context: context, 
       title: 'Default Alert Distance', 
       currentValue: _defaultAlertDistanceMeters ?? AppConstants.defaultAlertDistanceM, 
@@ -162,9 +193,13 @@ class _FirstRunSettingScreenState extends State<FirstRunSettingsScreen> {
     }  }
 
   void _onContinue(BuildContext context) async {
+
+    final navigator = Navigator.of(context);
+
     await widget.settingsService.setFirstRunComplete();
+
     // Navigate to HomeScreen
-    Navigator.of(context).pushReplacement(
+    navigator.pushReplacement(
       MaterialPageRoute(
         builder: (context) => HomeScreen(
             settingsService: widget.settingsService, 
@@ -174,4 +209,94 @@ class _FirstRunSettingScreenState extends State<FirstRunSettingsScreen> {
       ),
     );
   }
+
+  Future<void> _loadSampleData() async {
+    setState(() {
+      _isLoading = true;
+      _loadError = null;
+    });
+
+    try {
+      await _seedDatabaseIfEmpty(widget.repository);
+
+      // Set as active set
+      final sets = await widget.repository.getAllSets();
+      if (sets.isNotEmpty) {
+        await widget.settingsService.setActiveSetId(sets.first.id);  // should only be one set
+      }
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      // Show cussess and navigate to home
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Sample data loaded successfully!'), backgroundColor: Colors.green,),
+        );
+        //_onContinue(context);  // navigates to HomeScreen
+      }
+    
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+        _loadError = e.toString();
+      });
+    }
+
+
+  }
+
 }
+
+
+
+// TODO: REMOVE ALL CODE FROM HERE TO "END" LINE ONCE WE'RE NO LONGER TESTING
+Future<void> _seedDatabaseIfEmpty(WaypointRepository repository) async {
+  final existingSets = await repository.getAllSets();
+  if (existingSets.isNotEmpty) return;  // Already seeded or has real data
+
+  print('SEED: Database empty - seeding with sample data...');
+
+  final jsonString = await rootBundle.loadString(
+    'assets/data-samples/ct-segments-1-and-2.json',
+  );
+print('SEED: Here 1...');
+  // Decode once to get the Map
+  final json = jsonDecode(jsonString) as Map<String, dynamic>;
+print('SEED: Here 2...');
+
+  // Parse waypoint set
+  final waypointSet = WaypointParser.parseWaypointSetFromJson(json);
+print('SEED: Here 3...');
+
+  if (waypointSet == null) {
+    print ('SEED: Failed to parse waypoint set');
+    return;
+  }
+print('SEED: Here 4...');
+
+  // Insert waypointSet into database
+  final storedSet = await repository.createSet(name: waypointSet.name);
+print('SEED: Here 5...');
+
+  // Parse waypoints (uses the setId from the set)
+  final waypoints = WaypointParser.parseFromString(jsonString, storedSet.id);
+print('SEED: Here 6...');
+
+  // Insert waypoints into database
+  await repository.addWaypoints(waypoints);
+
+print('SEED: Here 7...');
+
+  print('SEED: Seeded ${waypoints.length} waypoints');
+  print('SEED: Waypoint Set: ${storedSet.name} (ID: ${storedSet.id}');
+
+  final currentActiveId = repository.settingsService.getActiveSetId();
+  if (currentActiveId == null) {
+    await repository.settingsService.setActiveSetId(storedSet.id);
+    print ('SEED: Set active waypoint set to ID ${storedSet.id}');
+  }
+}
+
+// TODO: ====== END ======

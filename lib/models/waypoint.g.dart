@@ -29,20 +29,24 @@ const WaypointSchema = CollectionSchema(
       name: r'direction',
       type: IsarType.string,
     ),
-    // r'enabled': PropertySchema(id: 2, name: r'enabled', type: IsarType.bool),
     r'latitude': PropertySchema(
-      id: 3,
+      id: 2,
       name: r'latitude',
       type: IsarType.double,
     ),
     r'longitude': PropertySchema(
-      id: 4,
+      id: 3,
       name: r'longitude',
       type: IsarType.double,
     ),
-    r'name': PropertySchema(id: 5, name: r'name', type: IsarType.string),
-    r'notes': PropertySchema(id: 6, name: r'notes', type: IsarType.string),
-    r'setId': PropertySchema(id: 7, name: r'setId', type: IsarType.long),
+    r'name': PropertySchema(id: 4, name: r'name', type: IsarType.string),
+    r'notes': PropertySchema(id: 5, name: r'notes', type: IsarType.string),
+    r'setId': PropertySchema(id: 6, name: r'setId', type: IsarType.long),
+    r'sortOrder': PropertySchema(
+      id: 7,
+      name: r'sortOrder',
+      type: IsarType.long,
+    ),
     r'type': PropertySchema(id: 8, name: r'type', type: IsarType.string),
   },
 
@@ -52,6 +56,19 @@ const WaypointSchema = CollectionSchema(
   deserializeProp: _waypointDeserializeProp,
   idName: r'id',
   indexes: {
+    r'sortOrder': IndexSchema(
+      id: -1119549396205841918,
+      name: r'sortOrder',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'sortOrder',
+          type: IndexType.value,
+          caseSensitive: false,
+        ),
+      ],
+    ),
     r'name': IndexSchema(
       id: 879695947855722453,
       name: r'name',
@@ -158,12 +175,12 @@ void _waypointSerialize(
     object.alerts,
   );
   writer.writeString(offsets[1], object.direction);
-  // writer.writeBool(offsets[2], object.enabled);
-  writer.writeDouble(offsets[3], object.latitude);
-  writer.writeDouble(offsets[4], object.longitude);
-  writer.writeString(offsets[5], object.name);
-  writer.writeString(offsets[6], object.notes);
-  writer.writeLong(offsets[7], object.setId);
+  writer.writeDouble(offsets[2], object.latitude);
+  writer.writeDouble(offsets[3], object.longitude);
+  writer.writeString(offsets[4], object.name);
+  writer.writeString(offsets[5], object.notes);
+  writer.writeLong(offsets[6], object.setId);
+  writer.writeLong(offsets[7], object.sortOrder);
   writer.writeString(offsets[8], object.type);
 }
 
@@ -183,13 +200,13 @@ Waypoint _waypointDeserialize(
         ) ??
         [],
     direction: reader.readStringOrNull(offsets[1]),
-    // enabled: reader.readBoolOrNull(offsets[2]) ?? true,
     id: id,
-    latitude: reader.readDouble(offsets[3]),
-    longitude: reader.readDouble(offsets[4]),
-    name: reader.readString(offsets[5]),
-    notes: reader.readStringOrNull(offsets[6]),
-    setId: reader.readLong(offsets[7]),
+    latitude: reader.readDouble(offsets[2]),
+    longitude: reader.readDouble(offsets[3]),
+    name: reader.readString(offsets[4]),
+    notes: reader.readStringOrNull(offsets[5]),
+    setId: reader.readLong(offsets[6]),
+    sortOrder: reader.readLong(offsets[7]),
     type: reader.readString(offsets[8]),
   );
   return object;
@@ -214,15 +231,15 @@ P _waypointDeserializeProp<P>(
     case 1:
       return (reader.readStringOrNull(offset)) as P;
     case 2:
-      return (reader.readBoolOrNull(offset) ?? true) as P;
+      return (reader.readDouble(offset)) as P;
     case 3:
       return (reader.readDouble(offset)) as P;
     case 4:
-      return (reader.readDouble(offset)) as P;
-    case 5:
       return (reader.readString(offset)) as P;
-    case 6:
+    case 5:
       return (reader.readStringOrNull(offset)) as P;
+    case 6:
+      return (reader.readLong(offset)) as P;
     case 7:
       return (reader.readLong(offset)) as P;
     case 8:
@@ -248,6 +265,14 @@ extension WaypointQueryWhereSort on QueryBuilder<Waypoint, Waypoint, QWhere> {
   QueryBuilder<Waypoint, Waypoint, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+
+  QueryBuilder<Waypoint, Waypoint, QAfterWhere> anySortOrder() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'sortOrder'),
+      );
     });
   }
 
@@ -331,6 +356,111 @@ extension WaypointQueryWhere on QueryBuilder<Waypoint, Waypoint, QWhereClause> {
           lower: lowerId,
           includeLower: includeLower,
           upper: upperId,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Waypoint, Waypoint, QAfterWhereClause> sortOrderEqualTo(
+    int sortOrder,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'sortOrder', value: [sortOrder]),
+      );
+    });
+  }
+
+  QueryBuilder<Waypoint, Waypoint, QAfterWhereClause> sortOrderNotEqualTo(
+    int sortOrder,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'sortOrder',
+                lower: [],
+                upper: [sortOrder],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'sortOrder',
+                lower: [sortOrder],
+                includeLower: false,
+                upper: [],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'sortOrder',
+                lower: [sortOrder],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'sortOrder',
+                lower: [],
+                upper: [sortOrder],
+                includeUpper: false,
+              ),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<Waypoint, Waypoint, QAfterWhereClause> sortOrderGreaterThan(
+    int sortOrder, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'sortOrder',
+          lower: [sortOrder],
+          includeLower: include,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Waypoint, Waypoint, QAfterWhereClause> sortOrderLessThan(
+    int sortOrder, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'sortOrder',
+          lower: [],
+          upper: [sortOrder],
+          includeUpper: include,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Waypoint, Waypoint, QAfterWhereClause> sortOrderBetween(
+    int lowerSortOrder,
+    int upperSortOrder, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'sortOrder',
+          lower: [lowerSortOrder],
+          includeLower: includeLower,
+          upper: [upperSortOrder],
           includeUpper: includeUpper,
         ),
       );
@@ -869,16 +999,6 @@ extension WaypointQueryFilter
       );
     });
   }
-
-  // QueryBuilder<Waypoint, Waypoint, QAfterFilterCondition> enabledEqualTo(
-  //   bool value,
-  // ) {
-  //   return QueryBuilder.apply(this, (query) {
-  //     return query.addFilterCondition(
-  //       FilterCondition.equalTo(property: r'enabled', value: value),
-  //     );
-  //   });
-  // }
 
   QueryBuilder<Waypoint, Waypoint, QAfterFilterCondition> idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
@@ -1452,6 +1572,65 @@ extension WaypointQueryFilter
     });
   }
 
+  QueryBuilder<Waypoint, Waypoint, QAfterFilterCondition> sortOrderEqualTo(
+    int value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'sortOrder', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<Waypoint, Waypoint, QAfterFilterCondition> sortOrderGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'sortOrder',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Waypoint, Waypoint, QAfterFilterCondition> sortOrderLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'sortOrder',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Waypoint, Waypoint, QAfterFilterCondition> sortOrderBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'sortOrder',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
   QueryBuilder<Waypoint, Waypoint, QAfterFilterCondition> typeEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -1626,18 +1805,6 @@ extension WaypointQuerySortBy on QueryBuilder<Waypoint, Waypoint, QSortBy> {
     });
   }
 
-  // QueryBuilder<Waypoint, Waypoint, QAfterSortBy> sortByEnabled() {
-  //   return QueryBuilder.apply(this, (query) {
-  //     return query.addSortBy(r'enabled', Sort.asc);
-  //   });
-  // }
-
-  // QueryBuilder<Waypoint, Waypoint, QAfterSortBy> sortByEnabledDesc() {
-  //   return QueryBuilder.apply(this, (query) {
-  //     return query.addSortBy(r'enabled', Sort.desc);
-  //   });
-  // }
-
   QueryBuilder<Waypoint, Waypoint, QAfterSortBy> sortByLatitude() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'latitude', Sort.asc);
@@ -1698,6 +1865,18 @@ extension WaypointQuerySortBy on QueryBuilder<Waypoint, Waypoint, QSortBy> {
     });
   }
 
+  QueryBuilder<Waypoint, Waypoint, QAfterSortBy> sortBySortOrder() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sortOrder', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Waypoint, Waypoint, QAfterSortBy> sortBySortOrderDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sortOrder', Sort.desc);
+    });
+  }
+
   QueryBuilder<Waypoint, Waypoint, QAfterSortBy> sortByType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'type', Sort.asc);
@@ -1724,18 +1903,6 @@ extension WaypointQuerySortThenBy
       return query.addSortBy(r'direction', Sort.desc);
     });
   }
-
-  // QueryBuilder<Waypoint, Waypoint, QAfterSortBy> thenByEnabled() {
-  //   return QueryBuilder.apply(this, (query) {
-  //     return query.addSortBy(r'enabled', Sort.asc);
-  //   });
-  // }
-
-  // QueryBuilder<Waypoint, Waypoint, QAfterSortBy> thenByEnabledDesc() {
-  //   return QueryBuilder.apply(this, (query) {
-  //     return query.addSortBy(r'enabled', Sort.desc);
-  //   });
-  // }
 
   QueryBuilder<Waypoint, Waypoint, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
@@ -1809,6 +1976,18 @@ extension WaypointQuerySortThenBy
     });
   }
 
+  QueryBuilder<Waypoint, Waypoint, QAfterSortBy> thenBySortOrder() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sortOrder', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Waypoint, Waypoint, QAfterSortBy> thenBySortOrderDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sortOrder', Sort.desc);
+    });
+  }
+
   QueryBuilder<Waypoint, Waypoint, QAfterSortBy> thenByType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'type', Sort.asc);
@@ -1831,12 +2010,6 @@ extension WaypointQueryWhereDistinct
       return query.addDistinctBy(r'direction', caseSensitive: caseSensitive);
     });
   }
-
-  // QueryBuilder<Waypoint, Waypoint, QDistinct> distinctByEnabled() {
-  //   return QueryBuilder.apply(this, (query) {
-  //     return query.addDistinctBy(r'enabled');
-  //   });
-  // }
 
   QueryBuilder<Waypoint, Waypoint, QDistinct> distinctByLatitude() {
     return QueryBuilder.apply(this, (query) {
@@ -1872,6 +2045,12 @@ extension WaypointQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Waypoint, Waypoint, QDistinct> distinctBySortOrder() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'sortOrder');
+    });
+  }
+
   QueryBuilder<Waypoint, Waypoint, QDistinct> distinctByType({
     bool caseSensitive = true,
   }) {
@@ -1901,12 +2080,6 @@ extension WaypointQueryProperty
     });
   }
 
-  // QueryBuilder<Waypoint, bool, QQueryOperations> enabledProperty() {
-  //   return QueryBuilder.apply(this, (query) {
-  //     return query.addPropertyName(r'enabled');
-  //   });
-  // }
-
   QueryBuilder<Waypoint, double, QQueryOperations> latitudeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'latitude');
@@ -1934,6 +2107,12 @@ extension WaypointQueryProperty
   QueryBuilder<Waypoint, int, QQueryOperations> setIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'setId');
+    });
+  }
+
+  QueryBuilder<Waypoint, int, QQueryOperations> sortOrderProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'sortOrder');
     });
   }
 

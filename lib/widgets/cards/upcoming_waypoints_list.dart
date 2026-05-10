@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
+import 'package:waypoint_alert_app/utils/ui.dart' as ui;
 
 class UpcomingWaypointsList extends StatelessWidget {
   final List<UpcomingWaypoint> waypoints;
@@ -46,9 +46,9 @@ class _WaypointListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: 2),
       child: ListTile(
-        leading: _IconForType(type: waypoint.type),
+        leading: ui.IconForType(type: waypoint.type),
         title: Text(
           waypoint.name,
           style: const TextStyle(fontWeight: FontWeight.w500),
@@ -72,49 +72,7 @@ class _WaypointListTile extends StatelessWidget {
   }
 }
 
-class _IconForType extends StatelessWidget {
-  final String type;
 
-  const _IconForType({required this.type});
-
-  @override 
-  Widget build(BuildContext context) {
-    final iconData = _getIconForType(type);
-    final color = _getColorForType(type);
-
-    return Icon(iconData, color: color);
-  }
-
-  IconData _getIconForType(String type) {
-    switch (type.toLowerCase()) {
-      case 'water':
-        return Icons.water_drop;
-      case 'trailhead':
-        return Icons.hiking;
-      case 'camp':
-        return MdiIcons.tent;
-      case 'junction':
-        return Icons.signpost;  // alternatives: assistant_direction, assistant_navigation, call_split, foloow_the_signs, fork_left, fork_right,
-      default:
-        return Icons.place;  
-    }
-  }
-
-  Color _getColorForType(String type) {
-    switch (type.toLowerCase()) {
-      case 'water':
-        return Colors.lightBlue;
-      case 'trailhead':
-        return Colors.green;
-      case 'camp':
-        return Colors.orange;
-      case 'junction': 
-        return Colors.purple;
-      default:
-        return Colors.grey;
-    }
-  }
-}
 
 class _EmptyState extends StatelessWidget {
   @override
@@ -159,6 +117,7 @@ class UpcomingWaypoint {
   final double distanceKm;
   final double bearing;
   final String type;
+  final String? notes;
   final int alertCount;
 
   const UpcomingWaypoint({
@@ -166,6 +125,7 @@ class UpcomingWaypoint {
     required this.distanceKm,
     required this.bearing,
     required this.type,
+    required this.notes,
     required this.alertCount,
   });
 }

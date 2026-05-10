@@ -15,14 +15,14 @@ class WaypointService {
 
 
 
-  /// Calculate distance between two waypoints by name
+  /// Calculate distance between two waypoints by sortOrder
   double getDistanceBetweenWaypoints(
     List<Waypoint> allWaypoints,
-    String waypointName1,
-    String waypointName2,
+    int waypoint1sortOrder,
+    int waypoint2sortOrder,
   ) {
-    final wp1 = allWaypoints.firstWhere((wp) => wp.name == waypointName1);
-    final wp2 = allWaypoints.firstWhere((wp) => wp.name == waypointName2);
+    final wp1 = allWaypoints.firstWhere((wp) => wp.sortOrder == waypoint1sortOrder);
+    final wp2 = allWaypoints.firstWhere((wp) => wp.sortOrder == waypoint2sortOrder);
     
     return calc.calculateDistance(
       wp1.latitude,
@@ -75,8 +75,8 @@ class WaypointService {
     
     if (allWaypoints.isEmpty) return null;
     
-    // Sort by trail order (name)
-    allWaypoints.sort((a, b) => a.name.compareTo(b.name));
+    // Sort by trail order (sortOrder)
+    allWaypoints.sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
     
     // Find closest waypoint (B)
     final closestB = await getClosestWaypoint(setId, currentLat, currentLon);
@@ -101,10 +101,10 @@ class WaypointService {
     
     // Calculate distances between waypoints
     final distAB = waypointA != null 
-      ? getDistanceBetweenWaypoints(allWaypoints, waypointA.name, closestB.name)
+      ? getDistanceBetweenWaypoints(allWaypoints, waypointA.sortOrder, closestB.sortOrder)
       : double.infinity;
     final distBC = waypointC != null
-      ? getDistanceBetweenWaypoints(allWaypoints, closestB.name, waypointC.name)
+      ? getDistanceBetweenWaypoints(allWaypoints, closestB.sortOrder, waypointC.sortOrder)
       : double.infinity;
     
     // Triangle inequality test:
@@ -227,12 +227,12 @@ class WaypointService {
 
     if (allWaypoints.isEmpty) return null;
 
-    allWaypoints.sort((a,b) => a.name.compareTo(b.name));
+    allWaypoints.sort((a,b) => a.sortOrder.compareTo(b.sortOrder));
 
     List<Waypoint> aheadWaypoints;
     if (nextWaypoint != null) {
       aheadWaypoints = allWaypoints
-        .where((wp) => wp.name.compareTo(nextWaypoint.name) >= 0)
+        .where((wp) => wp.sortOrder.compareTo(nextWaypoint.sortOrder) >= 0)
         .toList();
     } else {
       return null;
@@ -257,8 +257,8 @@ class WaypointService {
     final allWaypoints = await repository.getWaypointsForSet(setId);
     if (allWaypoints.isEmpty) return [];
 
-    // sort by name (trail order)
-    allWaypoints.sort((a, b) => a.name.compareTo(b.name));
+    // sort by sortOrder (trail order)
+    allWaypoints.sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
 
     // find the first waypoint ahead on the trail
     final nextWaypoint = await getNextWaypoint(setId, currentLat, currentLon);

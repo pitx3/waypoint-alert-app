@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 
+import 'package:waypoint_alert_app/utils/ui.dart' as ui;
+
 class NextWaypointCard extends StatelessWidget {
   final String name;
+  final String type;
   final double distanceKm;
   final double bearing;
+  final String? notes;
 
   const NextWaypointCard({
     super.key,
     required this.name,
+    required this.type,
     required this.distanceKm,
     required this.bearing,
+    required this.notes,
   });
 
   @override
@@ -22,7 +28,7 @@ class NextWaypointCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Icon(Icons.flag, size: 20),
+                ui.IconForType(type: type),
                 const SizedBox(width: 8),
                 const Text(
                   'NEXT WAYPOINT',
@@ -32,24 +38,9 @@ class NextWaypointCard extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              name,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                Icon(
-                  Icons.directions_walk,
-                  size: 16,
-                  color: Colors.teal[400],
-                ),
-                const SizedBox(width: 4),
+                const Spacer(),
                 Text(
-                  '${distanceKm.toStringAsFixed(1)} km away',
+                  '${distanceKm.toStringAsFixed(1)} km',
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.teal[400],
@@ -73,7 +64,7 @@ class NextWaypointCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        '${bearing!.toStringAsFixed(0)}°',
+                        '${bearing.toStringAsFixed(0)}°',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 12,
@@ -83,6 +74,17 @@ class NextWaypointCard extends StatelessWidget {
                     ],
                   ),
                 ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              name,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Text(notes ?? ''),             
               ],
             ),
           ],

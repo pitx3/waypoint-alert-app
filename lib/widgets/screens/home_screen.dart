@@ -75,36 +75,28 @@ class _HomeScreenState extends State<HomeScreen> {
         distanceKm: distance / 1000,
         bearing: bearing,
         type: wp.type,
+        notes: wp.notes,
         alertCount: wp.alerts.length,
       );
     }).toList();
 
     // Get next waypoint (if any)
-    final nextWaypoint = (upcomingWaypoints.length > 0) ? upcomingWaypoints[0] : null;
+    final nextWaypoint = (upcomingWaypoints.isNotEmpty) ? upcomingWaypoints[0] : null;
 
     // Get active set info
-    final allWaypoints = await widget.waypointService.repository
-        .getWaypointsForSet(setId);
-    final setName = allWaypoints.isNotEmpty
-        ? _extractSetName(allWaypoints.first.name)
-        : 'Unknown Set';
+    final waypointSet = await widget.waypointService.repository.getSet(setId);
+    final setName = waypointSet?.name ?? 'Unknown Set';
+    final waypointCount = await widget.waypointService.repository
+      .getWaypointsForSet(setId)
+      .then((list) => list.length);
 
     setState(() {
       _waterInfo = waterInfo;
       _activeSetName = setName;
-      _activeSetCount = allWaypoints.length;
+      _activeSetCount = waypointCount;
       _upcomingWaypoints = upcomingWaypoints;
       _nextWaypoint = nextWaypoint;
     });
-  }
-
-  String _extractSetName(String waypointName) {
-    // Extract "01" from "01-000TH" etc.
-    final parts = waypointName.split('-');
-    if (parts.isNotEmpty) {
-      return 'Segment ${parts[0]}';
-    }
-    return 'Unknown Set';
   }
 
   @override
@@ -129,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -146,12 +138,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Text('No active waypoint set'),
                         ),
                       ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 4),
                     if (_nextWaypoint != null)
                       NextWaypointCard(
                         name: _nextWaypoint!.name,
+                        type: _nextWaypoint!.type,
                         distanceKm: _nextWaypoint!.distanceKm,
                         bearing: _nextWaypoint!.bearing,
+                        notes: _nextWaypoint!.notes,
                       )
                     else
                       const Card(
@@ -160,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Text('No next waypoint'),
                         ),
                       ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 2),
                     if (_waterInfo != null)
                       ClosestWaterCard(waterInfo: _waterInfo!)
                     else
@@ -170,7 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Text('Loading water info...'),
                         ),
                       ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 8),
                     UpcomingWaypointsList(
                       waypoints: _upcomingWaypoints,
                       maxDistanceKm: 10.0,

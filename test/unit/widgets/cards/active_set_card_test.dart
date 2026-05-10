@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:waypoint_alert_app/widgets/cards/active_set_card.dart';
@@ -27,14 +25,9 @@ void main() {
         setName, waypointCount
       ));
 
-      expectText('Active Set');
+      expectIcon(Icons.folder, reason: 'Did not find Icons.folder icon');
       expectText(setName);
-      expectText('$waypointCount waypoints loaded');
-
-
-      // expect(find.text('Active Set'), findsOneWidget, reason: 'Could not find text "Active Set"');
-      // expect(find.text(setName), findsOneWidget, reason: 'Could not find text "$setName"');
-      // expect(find.text('$waypointCount waypoints loaded'), findsOneWidget, reason: 'Did not find text "$waypointCount waypoints loaded"');
+      expectText('$waypointCount');
     });
 
     testWidgets('calls onTap when tapped', (tester) async {

@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.waypoint_alert_app"
+    namespace = "com.pitx3.waypoint_alert_app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "29.0.14206865"
 
@@ -21,7 +21,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.waypoint_alert_app"
+        applicationId = "com.pitx3.waypoint_alert_app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
