@@ -2,6 +2,7 @@
   "waypoints": [
     {
       "name": "Clear Creek Crossing",
+      "sortOrder": 1,
       "latitude": 39.1234,
       "longitude": -106.5678,
       "type": "water",
@@ -16,6 +17,7 @@
     },
     {
       "name": "Hope Pass Trailhead",
+      "sortOrder": 2,
       "latitude": 39.2345,
       "longitude": -106.6789,
       "type": "trailhead",
@@ -27,7 +29,8 @@
       ]
     },
     {
-      "name": "Junction to Mt. Massive",
+      "name": "Junction to Mt. Massive", 
+      "sortOrder": 3,
       "latitude": 39.2456,
       "longitude": -106.6890,
       "type": "junction",

@@ -4,7 +4,36 @@ import 'package:waypoint_alert_app/models/water_info.dart';
 import 'package:waypoint_alert_app/models/waypoint.dart';
 import 'package:waypoint_alert_app/widgets/cards/closest_water_card.dart';
 
+import '../../../helpers/expect_helpers.dart';
+
 void main() {
+
+  // Sample Waypoints
+  final waypoint1 = Waypoint(
+        id: 1,
+        setId: 1,
+        sortOrder: 1,
+        name: '01-033WT',
+        latitude: 39.47043,
+        longitude: -105.1353,
+        type: 'water',
+        alerts: [],
+      );
+
+  final waypoint2 = Waypoint(
+        id: 2,
+        setId: 1,
+        sortOrder: 2,
+        name: '01-091WT',
+        latitude: 39.41959,
+        longitude: -105.12433,
+        type: 'water',
+        notes: 'Fill\'r up!',
+        alerts: [],
+      );
+
+
+
   group('ClosestWaterCard', () {
     testWidgets('shows no water message when closestWater is null', (tester) async {
       final waterInfo = WaterInfo(
@@ -26,19 +55,9 @@ void main() {
     });
 
     testWidgets('shows closest water ahead with forward arrow', (tester) async {
-      final waypoint = Waypoint(
-        id: 1,
-        setId: 1,
-        sortOrder: 1,
-        name: '01-033WT',
-        latitude: 39.47043,
-        longitude: -105.1353,
-        type: 'water',
-        alerts: [],
-      );
-
+      
       final waterInfo = WaterInfo(
-        closestWater: waypoint,
+        closestWater: waypoint1,
         closestDistanceMeters: 1500,
         closestBearing: 180,
         isClosestBehind: false,
@@ -65,27 +84,9 @@ void main() {
     });
 
     testWidgets('shows closest water behind with back arrow and next ahead', (tester) async {
-      final closestWaypoint = Waypoint(
-        id: 1,
-        setId: 1,
-        sortOrder: 1,
-        name: '01-033WT',
-        latitude: 39.47043,
-        longitude: -105.1353,
-        type: 'water',
-        alerts: [],
-      );
+      final closestWaypoint = waypoint1;
 
-      final nextWaypoint = Waypoint(
-        id: 2,
-        setId: 1,
-        sortOrder: 2,
-        name: '01-091WT',
-        latitude: 39.41959,
-        longitude: -105.12433,
-        type: 'water',
-        alerts: [],
-      );
+      final nextWaypoint = waypoint2;
 
       final waterInfo = WaterInfo(
         closestWater: closestWaypoint,
@@ -123,16 +124,7 @@ void main() {
     });
 
     testWidgets('formats distance correctly', (tester) async {
-      final waypoint = Waypoint(
-        id: 1,
-        setId: 1,
-        sortOrder: 1,
-        name: 'TEST',
-        latitude: 39.0,
-        longitude: -105.0,
-        type: 'water',
-        alerts: [],
-      );
+      final waypoint = waypoint1;
 
       // Test meters (< 1000)
       final waterInfoMeters = WaterInfo(
@@ -170,6 +162,49 @@ void main() {
 
       expect(find.text('3.2km'), findsOneWidget);
     });
+
+    testWidgets('finds notes when present on closest water', (tester) async {
+      final waypoint = waypoint2; // this waypoint has notes
+      final notesString = waypoint.notes ?? 'nothing';
+
+      final waterInfo = WaterInfo(
+        closestWater: waypoint,
+        closestBearing: 180,
+        closestDistanceMeters: 1000,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ClosestWaterCard(waterInfo: waterInfo),
+          ),
+        ),
+      );
+
+      expectText(notesString);
+    });
+
+    testWidgets('finds no notes when absent on closest water', (tester) async {
+      final waypoint = waypoint1; // this waypoint has notes
+      final notesString = waypoint.notes ?? 'no note here!';
+
+      final waterInfo = WaterInfo(
+        closestWater: waypoint,
+        closestBearing: 180,
+        closestDistanceMeters: 1000,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ClosestWaterCard(waterInfo: waterInfo),
+          ),
+        ),
+      );
+
+      expectTextNotFound(notesString);
+    });
+
 
   });
 }

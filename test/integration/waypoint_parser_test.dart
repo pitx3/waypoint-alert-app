@@ -16,6 +16,7 @@ void main() {
       // Test first waypoint
       final first = waypoints.first;
       expect(first.setId, 1, reason: 'setId should be assigned');
+      expect(first.sortOrder, 1, reason: 'sortOrder should be 1');
       expect(first.name.isNotEmpty, true, reason: 'name should not be empty');
       expect(first.latitude, isNot(equals(0.0)), reason: 'latitude should be valid');
       expect(first.longitude, isNot(equals(0.0)), reason: 'longitide should be valid');
