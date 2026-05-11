@@ -167,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 8),
                     UpcomingWaypointsList(
                       waypoints: _upcomingWaypoints,
-                      maxDistanceKm: 10.0,
+                      maxDistanceKm: 10.0,  // TODO: Decide whether this should remain hard-coded or be an AppSetting
                     ),
                   ],
                 ),
@@ -179,9 +179,15 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _toggleMonitoring() {
+  void _toggleMonitoring() async {
+    final newState = !_isMonitoring;
+    if (newState) {
+      await widget.locationService.start();
+    } else {
+      await widget.locationService.stop();
+    }
     setState(() {
-      _isMonitoring = !_isMonitoring;
+      _isMonitoring = newState;
     });
   }
 

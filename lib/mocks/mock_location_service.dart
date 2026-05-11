@@ -36,4 +36,10 @@ class MockLocationService implements LocationService {
 
   @override
   Future<bool> requestPermission() async => true;
+
+  @override
+  Future<void> start() async {}
+
+  @override
+  Future<void> stop() async {}
 }

@@ -17,6 +17,15 @@ abstract class LocationService {
 
   /// Request location permission (returns true if granted)
   Future<bool> requestPermission();
+
+  /// Start location tracking (turn on GPS hardware)
+  /// Call when user enables monitoring
+  Future<void> start();
+
+  /// Stop location tracking (turn off GPS hardware to save power)
+  /// Call when user disables monitoring or app is backgrounded
+  Future<void> stop();
+
 }
 
 class LocationUpdate {

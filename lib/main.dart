@@ -23,10 +23,8 @@ void main() async {
     settingsService: settingsService,
   );
   // TODO: Switch this for a real location service for production use
-  final locationService = MockLocationService();
-
-  // TODO: Remove this once we're no longer testing
-  //Future.microtask(() => _seedDatabaseIfEmpty(repository));
+  //final locationService = MockLocationService();
+  final locationService = MovingMockLocationService(route: testRoute);
   
   runApp(WaypointAlertApp(
     isarService: isarService,
