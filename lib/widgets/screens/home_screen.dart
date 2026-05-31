@@ -6,6 +6,7 @@ import 'package:waypoint_alert_app/services/waypoint_service.dart';
 import 'package:waypoint_alert_app/widgets/banners/monitoring_banner.dart';
 import 'package:waypoint_alert_app/widgets/cards/active_set_card.dart';
 import 'package:waypoint_alert_app/widgets/cards/closest_water_card.dart';
+import 'package:waypoint_alert_app/widgets/cards/location_card.dart';
 import 'package:waypoint_alert_app/widgets/cards/next_waypoint_card.dart';
 import 'package:waypoint_alert_app/widgets/cards/upcoming_waypoints_list.dart';
 
@@ -34,6 +35,9 @@ class _HomeScreenState extends State<HomeScreen> {
   int? _activeSetCount;
   List<UpcomingWaypoint> _upcomingWaypoints = [];
   UpcomingWaypoint? _nextWaypoint;
+  double _currentLat = 0.0;
+  double _currentLon = 0.0;
+  DateTime? _lastLocationUpdate;
 
   @override
   void initState() {
@@ -48,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // Get current location from service
     final currentLat = widget.locationService.latitude;
     final currentLon = widget.locationService.longitude;
-
+    
     // Load water info
     final waterInfo = await widget.waypointService.getWaterInfo(
       setId,
@@ -96,6 +100,8 @@ class _HomeScreenState extends State<HomeScreen> {
       _activeSetCount = waypointCount;
       _upcomingWaypoints = upcomingWaypoints;
       _nextWaypoint = nextWaypoint;
+      _currentLat = currentLat;
+      _currentLon = currentLon;
     });
   }
 
@@ -118,6 +124,11 @@ class _HomeScreenState extends State<HomeScreen> {
             MonitoringBanner(
               isMonitoring: _isMonitoring,
               onToggle: _toggleMonitoring,
+            ),
+            LocationCard(
+              latitude: _currentLat,
+              longitude: _currentLon,
+              lastUpdated: _lastLocationUpdate,
             ),
             Expanded(
               child: SingleChildScrollView(
