@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:waypoint_alert_app/utils/ui.dart' as ui;
+import 'package:waypoint_alert_app/widgets/cards/empty_state_card.dart';
 
 class UpcomingWaypointsList extends StatelessWidget {
   final List<UpcomingWaypoint> waypoints;
@@ -14,7 +15,11 @@ class UpcomingWaypointsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (waypoints.isEmpty) {
-      return _EmptyState();
+      return EmptyStateCard(
+        title: 'No Nearby Waypoints', 
+        subtitle: 'No waypoints within ${maxDistanceKm.toStringAsFixed(1)} km',
+        icon: Icons.near_me_disabled,
+      );
     }
 
     return Column(
@@ -67,44 +72,6 @@ class _WaypointListTile extends StatelessWidget {
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             )
           : null,
-      ),
-    );
-  }
-}
-
-
-
-class _EmptyState extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          children: [
-            Icon(
-              Icons.place_outlined,
-              size: 48,
-              color: Colors.grey[600],
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'No waypoints loaded',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Import a waypoint set to get started',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[700],
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

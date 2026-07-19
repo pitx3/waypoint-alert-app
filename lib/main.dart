@@ -4,6 +4,7 @@ import 'package:waypoint_alert_app/constants/app_constants.dart';
 // import 'package:waypoint_alert_app/mocks/mock_location_service.dart';
 import 'package:waypoint_alert_app/mocks/moving_mock_location_service.dart';
 import 'package:waypoint_alert_app/mocks/test_data.dart';
+import 'package:waypoint_alert_app/services/geolocator_location_serivce.dart';
 import 'package:waypoint_alert_app/services/isar_service.dart';
 import 'package:waypoint_alert_app/services/location_service.dart';
 import 'package:waypoint_alert_app/services/settings_service.dart';
@@ -26,7 +27,10 @@ void main() async {
   );
   // TODO: Switch this for a real location service for production use
   //final locationService = MockLocationService();
-  final locationService = MovingMockLocationService(route: testRoute);
+  // final locationService = MovingMockLocationService(route: testRoute);
+  final locationService = GeolocatorLocationSerivce(settingsService);
+
+  await settingsService.setActiveSetId(1);
   
   runApp(WaypointAlertApp(
     isarService: isarService,
@@ -36,8 +40,6 @@ void main() async {
     repository: repository,
   ));
 
-
- 
 }
 
 class WaypointAlertApp extends StatelessWidget {

@@ -26,6 +26,9 @@ abstract class LocationService {
   /// Call when user disables monitoring or app is backgrounded
   Future<void> stop();
 
+  /// Adjust GPS ping interval (e.g. near critical waypoints)
+  void updatePingInterval(Duration newInterval);
+
 }
 
 class LocationUpdate {

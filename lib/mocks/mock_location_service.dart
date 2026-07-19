@@ -42,4 +42,7 @@ class MockLocationService implements LocationService {
 
   @override
   Future<void> stop() async {}
+
+  @override
+  void updatePingInterval(Duration newInterval) {}
 }

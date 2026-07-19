@@ -13,8 +13,8 @@ class MovingMockLocationService implements LocationService {
   /// Route segments to simulate (in order)
   final List<LatLon> route;
   
-  /// Interval between location updates (default: 3 seconds for testing)
-  final Duration updateInterval;
+  /// Interval between location updates
+  Duration updateInterval;
   
   /// Whether to loop the route when reaching the end
   final bool loop;
@@ -52,10 +52,9 @@ class MovingMockLocationService implements LocationService {
   @override
   Future<void> start() async {
     if (_timer != null) return; // Already running
+    _moveToNextPoint();
 
-    _timer = Timer.periodic(updateInterval, (_) {
-      _moveToNextPoint();
-    });
+    _startTimer();
   }
 
   /// Stop emitting location updates
@@ -94,9 +93,20 @@ class MovingMockLocationService implements LocationService {
   @override
   Future<bool> requestPermission() async => true;
 
-  // @override
-  // void dispose() {
-  //   stop();
-  //   _streamController?.close();
-  // }
+  @override
+  void updatePingInterval(Duration newInterval) {
+    updateInterval = newInterval;
+
+    if (_timer == null) return;
+
+    _startTimer();
+  }
+
+  /// Cancel any existing timer and start a new one
+  void _startTimer() {
+    _timer?.cancel();
+    _timer = Timer.periodic(updateInterval, (_) {
+      _moveToNextPoint();
+    });
+  }
 }

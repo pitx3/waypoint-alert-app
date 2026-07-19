@@ -8,11 +8,13 @@ import 'package:waypoint_alert_app/services/waypoint_service.dart';
 import 'package:waypoint_alert_app/widgets/banners/monitoring_banner.dart';
 import 'package:waypoint_alert_app/widgets/cards/active_set_card.dart';
 import 'package:waypoint_alert_app/widgets/cards/closest_water_card.dart';
+import 'package:waypoint_alert_app/widgets/cards/empty_state_card.dart';
 import 'package:waypoint_alert_app/widgets/cards/location_card.dart';
 import 'package:waypoint_alert_app/widgets/cards/next_waypoint_card.dart';
 import 'package:waypoint_alert_app/widgets/cards/upcoming_waypoints_list.dart';
 
 import 'package:waypoint_alert_app/utils/calculators.dart' as calc;
+import 'package:waypoint_alert_app/widgets/cards/waypoint_display_card.dart';
 
 class HomeScreen extends StatefulWidget {
   final SettingsService settingsService;
@@ -138,72 +140,32 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             MonitoringBanner(
               isMonitoring: _isMonitoring,
               onToggle: _toggleMonitoring,
             ),
-            ?(_isMonitoring) ?
-            LocationCard(
-              latitude: _currentLat,
-              longitude: _currentLon,
-              lastUpdated: _lastLocationUpdate,
-            ) : null,
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (_activeSetName != null)
-                      ActiveSetCard(
-                        setName: _activeSetName!,
-                        waypointCount: _activeSetCount ?? 0,
-                        onTap: () => _showHamburgerMenu(context),
-                      )
-                    else
-                      const Card(
-                        child: Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Text('No active waypoint set'),
-                        ),
-                      ),
-                    const SizedBox(height: 4),
-                    if (_nextWaypoint != null)
-                      NextWaypointCard(
-                        name: _nextWaypoint!.name,
-                        type: _nextWaypoint!.type,
-                        distanceKm: _nextWaypoint!.distanceKm,
-                        bearing: _nextWaypoint!.bearing,
-                        notes: _nextWaypoint!.notes,
-                      )
-                    else
-                      const Card(
-                        child: Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Text('No next waypoint'),
-                        ),
-                      ),
-                    const SizedBox(height: 2),
-                    if (_waterInfo != null)
-                      ClosestWaterCard(waterInfo: _waterInfo!)
-                    else
-                      const Card(
-                        child: Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Text('Loading water info...'),
-                        ),
-                      ),
-                    const SizedBox(height: 8),
-                    UpcomingWaypointsList(
-                      waypoints: _upcomingWaypoints,
-                      maxDistanceKm: 10.0,  // TODO: Decide whether this should remain hard-coded or be an AppSetting
-                    ),
-                  ],
-                ),
+            if (_isMonitoring)
+              LocationCard(
+                latitude: _currentLat,
+                longitude: _currentLon,
+                lastUpdated: _lastLocationUpdate,
               ),
-            ),
+            if (_activeSetName != null)
+              WaypointDisplayCard(
+                setName: _activeSetName!,
+                waypointCount: _activeSetCount ?? 0,
+                onSetTap: () =>_showHamburgerMenu(context),
+                nextWaypoint: _nextWaypoint,
+                waterInfo: _waterInfo,
+                upcomingWaypoints: _upcomingWaypoints,
+              )
+            else
+              const EmptyStateCard(
+                title: 'No Wapoint Set Loaded',
+                subtitle: 'Import a waypoint set to get started',
+                icon: Icons.folder_off,
+              ),
           ],
         ),
       ),
