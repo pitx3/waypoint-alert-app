@@ -256,46 +256,31 @@ Future<void> _seedDatabaseIfEmpty(WaypointRepository repository) async {
   final existingSets = await repository.getAllSets();
   if (existingSets.isNotEmpty) return;  // Already seeded or has real data
 
-  print('SEED: Database empty - seeding with sample data...');
-
   final jsonString = await rootBundle.loadString(
     'assets/data-samples/ct-segments-1-and-2.json',
   );
-print('SEED: Here 1...');
   // Decode once to get the Map
   final json = jsonDecode(jsonString) as Map<String, dynamic>;
-print('SEED: Here 2...');
 
   // Parse waypoint set
   final waypointSet = WaypointParser.parseWaypointSetFromJson(json);
-print('SEED: Here 3...');
 
   if (waypointSet == null) {
-    print ('SEED: Failed to parse waypoint set');
     return;
   }
-print('SEED: Here 4...');
 
   // Insert waypointSet into database
   final storedSet = await repository.createSet(name: waypointSet.name);
-print('SEED: Here 5...');
 
   // Parse waypoints (uses the setId from the set)
   final waypoints = WaypointParser.parseFromString(jsonString, storedSet.id);
-print('SEED: Here 6...');
 
   // Insert waypoints into database
   await repository.addWaypoints(waypoints);
 
-print('SEED: Here 7...');
-
-  print('SEED: Seeded ${waypoints.length} waypoints');
-  print('SEED: Waypoint Set: ${storedSet.name} (ID: ${storedSet.id}');
-
   final currentActiveId = repository.settingsService.getActiveSetId();
   if (currentActiveId == null) {
     await repository.settingsService.setActiveSetId(storedSet.id);
-    print ('SEED: Set active waypoint set to ID ${storedSet.id}');
   }
 }
 

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:waypoint_alert_app/models/water_info.dart';
 import 'package:waypoint_alert_app/services/location_service.dart';
@@ -38,11 +40,28 @@ class _HomeScreenState extends State<HomeScreen> {
   double _currentLat = 0.0;
   double _currentLon = 0.0;
   DateTime? _lastLocationUpdate;
+  StreamSubscription<LocationUpdate>? _locationSubscription;
 
   @override
   void initState() {
     super.initState();
+    _locationSubscription = widget.locationService.locationStream.listen((update) {
+      if (mounted) {
+        setState(() {
+          _currentLat = update.latitude;
+          _currentLon = update.longitude;
+          _lastLocationUpdate = update.timestamp;
+        });
+        _loadData();
+      }
+    });
     _loadData();
+  }
+
+  @override
+  void dispose() {
+    _locationSubscription?.cancel();
+    super.dispose();
   }
 
   Future<void> _loadData() async {
@@ -50,8 +69,8 @@ class _HomeScreenState extends State<HomeScreen> {
     if (setId == null) return;
 
     // Get current location from service
-    final currentLat = widget.locationService.latitude;
-    final currentLon = widget.locationService.longitude;
+    final currentLat = _currentLat;
+    final currentLon = _currentLon;
     
     // Load water info
     final waterInfo = await widget.waypointService.getWaterInfo(
@@ -125,11 +144,12 @@ class _HomeScreenState extends State<HomeScreen> {
               isMonitoring: _isMonitoring,
               onToggle: _toggleMonitoring,
             ),
+            ?(_isMonitoring) ?
             LocationCard(
               latitude: _currentLat,
               longitude: _currentLon,
               lastUpdated: _lastLocationUpdate,
-            ),
+            ) : null,
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(8),

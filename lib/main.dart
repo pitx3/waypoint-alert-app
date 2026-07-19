@@ -1,7 +1,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:waypoint_alert_app/constants/app_constants.dart';
-import 'package:waypoint_alert_app/mocks/mock_location_service.dart';
+// import 'package:waypoint_alert_app/mocks/mock_location_service.dart';
+import 'package:waypoint_alert_app/mocks/moving_mock_location_service.dart';
+import 'package:waypoint_alert_app/mocks/test_data.dart';
 import 'package:waypoint_alert_app/services/isar_service.dart';
 import 'package:waypoint_alert_app/services/location_service.dart';
 import 'package:waypoint_alert_app/services/settings_service.dart';

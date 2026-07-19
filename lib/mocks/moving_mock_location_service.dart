@@ -27,7 +27,7 @@ class MovingMockLocationService implements LocationService {
 
   MovingMockLocationService({
     required this.route,
-    this.updateInterval = const Duration(seconds: 3),
+    this.updateInterval = const Duration(seconds: 8),
     this.loop = true,
   }) {
     if (route.isNotEmpty) {
@@ -50,7 +50,7 @@ class MovingMockLocationService implements LocationService {
 
   /// Start emitting location updates
   @override
-  Future<voic> start() {
+  Future<void> start() async {
     if (_timer != null) return; // Already running
 
     _timer = Timer.periodic(updateInterval, (_) {
@@ -60,13 +60,14 @@ class MovingMockLocationService implements LocationService {
 
   /// Stop emitting location updates
   @override
-  Futuer<void> stop() {
+  Future<void> stop() async {
     _timer?.cancel();
     _timer = null;
   }
 
   void _moveToNextPoint() {
     if (route.isEmpty) return;
+    print('Current Index: {$_currentIndex}');
 
     _currentIndex++;
     if (_currentIndex >= route.length) {
@@ -93,9 +94,9 @@ class MovingMockLocationService implements LocationService {
   @override
   Future<bool> requestPermission() async => true;
 
-  @override
-  void dispose() {
-    stop();
-    _streamController?.close();
-  }
+  // @override
+  // void dispose() {
+  //   stop();
+  //   _streamController?.close();
+  // }
 }
