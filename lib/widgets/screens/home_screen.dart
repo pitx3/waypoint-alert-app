@@ -39,9 +39,13 @@ class _HomeScreenState extends State<HomeScreen> {
   int? _activeSetCount;
   List<UpcomingWaypoint> _upcomingWaypoints = [];
   UpcomingWaypoint? _nextWaypoint;
-  double _currentLat = 0.0;
-  double _currentLon = 0.0;
+  double? _currentLat;
+  double? _currentLon;
   DateTime? _lastLocationUpdate;
+  double? _cachedLat;
+  double? _cachedLon;
+  DateTime? _cachedTimeStamp;
+  bool _isGpsStale = false;
   StreamSubscription<LocationUpdate>? _locationSubscription;
 
   @override
@@ -50,9 +54,23 @@ class _HomeScreenState extends State<HomeScreen> {
     _locationSubscription = widget.locationService.locationStream.listen((update) {
       if (mounted) {
         setState(() {
-          _currentLat = update.latitude;
-          _currentLon = update.longitude;
-          _lastLocationUpdate = update.timestamp;
+          // if GPS got a fix, cache it
+          if (update.hasValidFix && update.latitude != null && update.longitude != null) {
+            _cachedLat = update.latitude;
+            _cachedLon = update.longitude;
+            _cachedTimeStamp = update.timestamp;
+          }
+          _currentLat = update.latitude ?? _cachedLat;
+          _currentLon = update.longitude ?? _cachedLon;
+          _lastLocationUpdate = _cachedTimeStamp;
+
+          // Is this data stale?
+          if (_cachedTimeStamp != null) {
+            final age = DateTime.now().difference(_cachedTimeStamp!);
+            _isGpsStale = age > Duration(minutes: 2);  // TODO: Use SettingsService
+          } else {
+            _isGpsStale = false;
+          }
         });
         _loadData();
       }
@@ -71,8 +89,8 @@ class _HomeScreenState extends State<HomeScreen> {
     if (setId == null) return;
 
     // Get current location from service
-    final currentLat = _currentLat;
-    final currentLon = _currentLon;
+    final currentLat = _currentLat ?? 0.0;
+    final currentLon = _currentLon ?? 0.0;
     
     // Load water info
     final waterInfo = await widget.waypointService.getWaterInfo(
@@ -140,6 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Center(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             MonitoringBanner(
               isMonitoring: _isMonitoring,
@@ -150,6 +169,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 latitude: _currentLat,
                 longitude: _currentLon,
                 lastUpdated: _lastLocationUpdate,
+                isDataStale: _isGpsStale,
               ),
             if (_activeSetName != null)
               WaypointDisplayCard(

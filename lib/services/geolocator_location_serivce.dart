@@ -92,7 +92,14 @@ class GeolocatorLocationSerivce implements LocationService {
         accuracy: position.accuracy,
       ));
     } catch (e) {
-      // TODO: Exception handling for failure to get GPS position
+      // Emit null coordinates to signal GPS failure
+      final checkTime = DateTime.now();
+      _streamController?.add(LocationUpdate(
+        latitude: null,
+        longitude: null,
+        timestamp: checkTime,
+        hasValidFix: false,
+      ));
     }  
   }
 

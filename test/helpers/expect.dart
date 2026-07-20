@@ -216,3 +216,17 @@ extension ColumnExpect on Expect<Column> {
     return this;
   }
 }
+
+// ------------------------------------------
+// Extension methods for CARD widgets
+// ------------------------------------------
+extension CardExpect on Expect<Card> {
+  Expect<Card> hasColor(Color? color, {String? reason}) {
+    expect(
+      widget.color,
+      color,
+      reason: reason ?? 'Expected Color $color, got ${widget.color}',
+    );  
+    return this;
+  }
+}

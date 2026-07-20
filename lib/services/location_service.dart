@@ -32,15 +32,17 @@ abstract class LocationService {
 }
 
 class LocationUpdate {
-  final double latitude;
-  final double longitude;
+  final double? latitude;
+  final double? longitude;
   final DateTime timestamp;
   final double? accuracy; // meters, null if unknown
+  final bool hasValidFix;
 
   const LocationUpdate({
-    required this.latitude,
-    required this.longitude,
+    this.latitude,
+    this.longitude,
     required this.timestamp,
     this.accuracy,
+    this.hasValidFix = true,
   });
 }

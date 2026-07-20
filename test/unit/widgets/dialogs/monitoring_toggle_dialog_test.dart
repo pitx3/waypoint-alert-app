@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:waypoint_alert_app/widgets/dialogs/monitorring_toggle_dialog.dart';
+import 'package:waypoint_alert_app/widgets/dialogs/monitoring_toggle_dialog.dart';
 
 Future<void> pumpDialogHarness(
   WidgetTester t,

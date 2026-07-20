@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:waypoint_alert_app/widgets/dialogs/monitorring_toggle_dialog.dart';
+import 'package:waypoint_alert_app/widgets/dialogs/monitoring_toggle_dialog.dart';
 
 class MonitoringBanner extends StatelessWidget {
   final bool isMonitoring;
