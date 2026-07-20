@@ -18,10 +18,10 @@ Widget _buildScaffold(String setName, int waypointCount, {VoidCallback? onTap}) 
 
 void main() {
   group('ActiveSetCard', () {
-    testWidgets('displays set name and waypoint count', (tester) async {
+    testWidgets('displays set name and waypoint count', (t) async {
       String setName = 'Colorado Trail 2026';
       int waypointCount = 47;
-      await tester.pumpWidget(_buildScaffold (
+      await t.pumpWidget(_buildScaffold (
         setName, waypointCount
       ));
 
@@ -30,13 +30,13 @@ void main() {
       expectText('$waypointCount');
     });
 
-    testWidgets('calls onTap when tapped', (tester) async {
+    testWidgets('calls onTap when tapped', (t) async {
       bool tapped = false;
 
-      await tester.pumpWidget(_buildScaffold('x', 4, onTap: () => tapped = true,));
+      await t.pumpWidget(_buildScaffold('x', 4, onTap: () => tapped = true,));
 
-      await tester.tap(find.byType(InkWell));
-      await tester.pumpAndSettle();
+      await t.tap(find.byType(InkWell));
+      await t.pumpAndSettle();
 
       expectTrue(tapped, reason: 'onTap not properly called');
     });

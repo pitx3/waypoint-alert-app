@@ -6,9 +6,9 @@ import 'package:waypoint_alert_app/widgets/cards/setting_card.dart';
 import '../../../helpers/expect_helpers.dart';
 
 void main() {
-  testWidgets('SettingCard displays title, value, and subtitle', (tester) async{
+  testWidgets('SettingCard displays title, value, and subtitle', (t) async{
 
-    await tester.pumpWidget(
+    await t.pumpWidget(
       MaterialApp (
         home: SettingCard(
           key: Key('test_setting_card'),

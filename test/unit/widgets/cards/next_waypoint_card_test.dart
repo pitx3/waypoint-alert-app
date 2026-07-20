@@ -15,12 +15,12 @@ Widget _buildScaffold(String name, double distanceKm, double bearing, String typ
 
 void main() {
   group('NextWaypointCard', (){
-    testWidgets('displays waypoint name, distance, bearing, and bearing badge', (tester) async {
+    testWidgets('displays waypoint name, distance, bearing, and bearing badge', (t) async {
       String name = 'Sargents Ridge';
       double distanceKm = 0.8;
       double bearing = 74;
       String notes = 'Top of the world!';
-      await tester.pumpWidget(_buildScaffold(name, distanceKm, bearing, '', notes));
+      await t.pumpWidget(_buildScaffold(name, distanceKm, bearing, '', notes));
 
       expectText('NEXT WAYPOINT');
       expectText(name);

@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+// ----------------------------------------------------------
+// Legacy methods only in this file. 
+// DO NOT ADD ANYTHING NEW HERE!!!
+// ----------------------------------------------------------
+
 void expectText(String text, {String? reason}) {
   expect(
     find.text(text),

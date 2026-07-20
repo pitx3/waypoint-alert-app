@@ -35,14 +35,14 @@ void main() {
 
 
   group('ClosestWaterCard', () {
-    testWidgets('shows no water message when closestWater is null', (tester) async {
+    testWidgets('shows no water message when closestWater is null', (t) async {
       final waterInfo = WaterInfo(
         closestWater: null,
         closestDistanceMeters: null,
         closestBearing: null,
       );
 
-      await tester.pumpWidget(
+      await t.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: ClosestWaterCard(waterInfo: waterInfo),
@@ -54,7 +54,7 @@ void main() {
       expect(find.text('No water waypoints available'), findsOneWidget);
     });
 
-    testWidgets('shows closest water ahead with forward arrow', (tester) async {
+    testWidgets('shows closest water ahead with forward arrow', (t) async {
       
       final waterInfo = WaterInfo(
         closestWater: waypoint1,
@@ -66,7 +66,7 @@ void main() {
         nextWaterBearing: null,
       );
 
-      await tester.pumpWidget(
+      await t.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: ClosestWaterCard(waterInfo: waterInfo),
@@ -83,7 +83,7 @@ void main() {
       expect(find.text('Next Ahead'), findsNothing);
     });
 
-    testWidgets('shows closest water behind with back arrow and next ahead', (tester) async {
+    testWidgets('shows closest water behind with back arrow and next ahead', (t) async {
       final closestWaypoint = waypoint1;
 
       final nextWaypoint = waypoint2;
@@ -98,7 +98,7 @@ void main() {
         nextWaterBearing: 135,
       );
 
-      await tester.pumpWidget(
+      await t.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: ClosestWaterCard(waterInfo: waterInfo),
@@ -123,7 +123,7 @@ void main() {
       expect(find.byIcon(Icons.arrow_back), findsOneWidget);
     });
 
-    testWidgets('formats distance correctly', (tester) async {
+    testWidgets('formats distance correctly', (t) async {
       final waypoint = waypoint1;
 
       // Test meters (< 1000)
@@ -134,7 +134,7 @@ void main() {
         isClosestBehind: false,
       );
 
-      await tester.pumpWidget(
+      await t.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: ClosestWaterCard(waterInfo: waterInfoMeters),
@@ -152,7 +152,7 @@ void main() {
         isClosestBehind: false,
       );
 
-      await tester.pumpWidget(
+      await t.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: ClosestWaterCard(waterInfo: waterInfoKm),
@@ -163,7 +163,7 @@ void main() {
       expect(find.text('3.2km'), findsOneWidget);
     });
 
-    testWidgets('finds notes when present on closest water', (tester) async {
+    testWidgets('finds notes when present on closest water', (t) async {
       final waypoint = waypoint2; // this waypoint has notes
       final notesString = waypoint.notes ?? 'nothing';
 
@@ -173,7 +173,7 @@ void main() {
         closestDistanceMeters: 1000,
       );
 
-      await tester.pumpWidget(
+      await t.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: ClosestWaterCard(waterInfo: waterInfo),
@@ -184,7 +184,7 @@ void main() {
       expectText(notesString);
     });
 
-    testWidgets('finds no notes when absent on closest water', (tester) async {
+    testWidgets('finds no notes when absent on closest water', (t) async {
       final waypoint = waypoint1; // this waypoint has notes
       final notesString = waypoint.notes ?? 'no note here!';
 
@@ -194,7 +194,7 @@ void main() {
         closestDistanceMeters: 1000,
       );
 
-      await tester.pumpWidget(
+      await t.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: ClosestWaterCard(waterInfo: waterInfo),

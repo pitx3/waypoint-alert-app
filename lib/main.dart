@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:waypoint_alert_app/constants/app_constants.dart';
 // import 'package:waypoint_alert_app/mocks/mock_location_service.dart';
-import 'package:waypoint_alert_app/mocks/moving_mock_location_service.dart';
-import 'package:waypoint_alert_app/mocks/test_data.dart';
+// import 'package:waypoint_alert_app/mocks/moving_mock_location_service.dart';
+// import 'package:waypoint_alert_app/mocks/test_data.dart';
 import 'package:waypoint_alert_app/services/geolocator_location_serivce.dart';
 import 'package:waypoint_alert_app/services/isar_service.dart';
 import 'package:waypoint_alert_app/services/location_service.dart';
@@ -25,11 +25,13 @@ void main() async {
     repository: repository,
     settingsService: settingsService,
   );
-  // TODO: Switch this for a real location service for production use
-  //final locationService = MockLocationService();
+  
+  // MOCK location services for local testing only
+  // final locationService = MockLocationService();
   // final locationService = MovingMockLocationService(route: testRoute);
   final locationService = GeolocatorLocationSerivce(settingsService);
 
+  // TODO: Remove after testing completed
   await settingsService.setActiveSetId(1);
   
   runApp(WaypointAlertApp(

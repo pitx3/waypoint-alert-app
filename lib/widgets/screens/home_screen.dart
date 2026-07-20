@@ -6,11 +6,11 @@ import 'package:waypoint_alert_app/services/location_service.dart';
 import 'package:waypoint_alert_app/services/settings_service.dart';
 import 'package:waypoint_alert_app/services/waypoint_service.dart';
 import 'package:waypoint_alert_app/widgets/banners/monitoring_banner.dart';
-import 'package:waypoint_alert_app/widgets/cards/active_set_card.dart';
-import 'package:waypoint_alert_app/widgets/cards/closest_water_card.dart';
+// import 'package:waypoint_alert_app/widgets/cards/active_set_card.dart';
+// import 'package:waypoint_alert_app/widgets/cards/closest_water_card.dart';
 import 'package:waypoint_alert_app/widgets/cards/empty_state_card.dart';
 import 'package:waypoint_alert_app/widgets/cards/location_card.dart';
-import 'package:waypoint_alert_app/widgets/cards/next_waypoint_card.dart';
+// import 'package:waypoint_alert_app/widgets/cards/next_waypoint_card.dart';
 import 'package:waypoint_alert_app/widgets/cards/upcoming_waypoints_list.dart';
 
 import 'package:waypoint_alert_app/utils/calculators.dart' as calc;

@@ -4,8 +4,8 @@ import 'package:waypoint_alert_app/widgets/cards/location_card.dart';
 
 void main() {
   group('LocationCard', () {
-    testWidgets('displays coordinates with 5 decimal places', (tester) async {
-      await tester.pumpWidget(
+    testWidgets('displays coordinates with 5 decimal places', (t) async {
+      await t.pumpWidget(
         const MaterialApp(
           home: Scaffold(
             body: LocationCard(
@@ -19,10 +19,10 @@ void main() {
       expect(find.text('39.49127, -105.09501'), findsOneWidget);
     });
 
-    testWidgets('displays timestamp when provided', (tester) async {
+    testWidgets('displays timestamp when provided', (t) async {
       final timestamp = DateTime(2026, 5, 10, 14, 30, 45);
 
-      await tester.pumpWidget(
+      await t.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: LocationCard(
@@ -37,8 +37,8 @@ void main() {
       expect(find.text('Updated: 14:30:45'), findsOneWidget);
     });
 
-    testWidgets('displays placeholder when timestamp is null', (tester) async {
-      await tester.pumpWidget(
+    testWidgets('displays placeholder when timestamp is null', (t) async {
+      await t.pumpWidget(
         const MaterialApp(
           home: Scaffold(
             body: LocationCard(
@@ -52,8 +52,8 @@ void main() {
       expect(find.text('Updated: --:--:--'), findsOneWidget);
     });
 
-    testWidgets('uses monospace font for coordinates', (tester) async {
-      await tester.pumpWidget(
+    testWidgets('uses monospace font for coordinates', (t) async {
+      await t.pumpWidget(
         const MaterialApp(
           home: Scaffold(
             body: LocationCard(
@@ -64,14 +64,14 @@ void main() {
         ),
       );
 
-      final textWidget = tester.widget(find.text('39.49127, -105.09501'));
+      final textWidget = t.widget(find.text('39.49127, -105.09501'));
       expect((textWidget as Text).style?.fontFamily, equals('monospace'));
     });
 
-    testWidgets('timestamp has smaller font than coordinates', (tester) async {
+    testWidgets('timestamp has smaller font than coordinates', (t) async {
       final timestamp = DateTime.now();
 
-      await tester.pumpWidget(
+      await t.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: LocationCard(
@@ -83,8 +83,8 @@ void main() {
         ),
       );
 
-      final coordText = tester.widget(find.text('39.49127, -105.09501')) as Text;
-      final timestampText = tester.widget(find.textContaining('Updated:')) as Text;
+      final coordText = t.widget(find.text('39.49127, -105.09501')) as Text;
+      final timestampText = t.widget(find.textContaining('Updated:')) as Text;
 
       expect(coordText.style?.fontSize, equals(16));
       expect(timestampText.style?.fontSize, equals(12));

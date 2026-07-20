@@ -29,10 +29,11 @@ void main() {
     });
 
     testWidgets('shows empty state when no waypoints', (tester) async {
-      await tester.pumpWidget(_buildScaffold(waypoints: [], maxDistanceKm: 0));
+      double maxDistanceKm = 10;
+      await tester.pumpWidget(_buildScaffold(waypoints: [], maxDistanceKm: maxDistanceKm));
 
-      expectText('No waypoints loaded');
-      expectText('Import a waypoint set to get started');
+      expectText('No Nearby Waypoints');
+      expectText('No waypoints within ${maxDistanceKm.toStringAsFixed(1)} km');
     });
 
     testWidgets('display alert count chips', (tester) async {

@@ -3,7 +3,7 @@ import 'package:waypoint_alert_app/services/waypoint_parser.dart';
 
 void main() {
   group('WaypointParser', () {
-    testWidgets('parses JSON string directly', (tester) async {
+    testWidgets('parses JSON string directly', (t) async {
       const testJson = '''
 {
   "waypoints": [
