@@ -52,6 +52,8 @@ class Expect<T extends Widget> {
 }
 
 extension ExpectHelpers on WidgetTester {
+
+  /// Checks that a specific widget exists
   Expect<T> exists<T extends Widget>(
     Object? obj,
     { Finder? finder, String? reason, }
@@ -71,6 +73,27 @@ extension ExpectHelpers on WidgetTester {
       actualFinder = finder ?? find.byType(T);
     }
 
+    return Expect<T>(this, actualFinder, reason: reason);
+  }
+
+  /// Checks that any widget of a specific type exists
+  void anyExist<T extends Widget>({Finder? finder, String? reason}) {
+    Finder actualFinder = finder ?? find.byType(T);
+    expect(
+      actualFinder,
+      findsAny,
+      reason: reason
+    );
+  }
+
+  /// Checks that a single widget of a specific type exists
+  Expect<T> oneExists<T extends Widget>({Finder? finder, String? reason}) {
+    Finder actualFinder = finder ?? find.byType(T);
+    expect(
+      actualFinder,
+      findsOne,
+      reason: reason
+    );
     return Expect<T>(this, actualFinder, reason: reason);
   }
 

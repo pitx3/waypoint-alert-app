@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:waypoint_alert_app/utils/ui.dart' as ui;
-import 'package:waypoint_alert_app/widgets/cards/empty_state_card.dart';
 
 class UpcomingWaypointsList extends StatelessWidget {
   final List<UpcomingWaypoint> waypoints;
@@ -15,11 +14,7 @@ class UpcomingWaypointsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (waypoints.isEmpty) {
-      return EmptyStateCard(
-        title: 'No Nearby Waypoints', 
-        subtitle: 'No waypoints within ${maxDistanceKm.toStringAsFixed(1)} km',
-        icon: Icons.near_me_disabled,
-      );
+      return const SizedBox.shrink();
     }
 
     return Column(

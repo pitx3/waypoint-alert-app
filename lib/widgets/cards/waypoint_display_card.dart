@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:waypoint_alert_app/models/water_info.dart';
 import 'package:waypoint_alert_app/widgets/cards/active_set_card.dart';
 import 'package:waypoint_alert_app/widgets/cards/closest_water_card.dart';
+import 'package:waypoint_alert_app/widgets/cards/empty_state_card.dart';
 import 'package:waypoint_alert_app/widgets/cards/next_waypoint_card.dart';
 import 'package:waypoint_alert_app/widgets/cards/upcoming_waypoints_list.dart';
 
@@ -29,6 +30,7 @@ class WaypointDisplayCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         ActiveSetCard(
           setName: setName, 
@@ -45,11 +47,10 @@ class WaypointDisplayCard extends StatelessWidget {
             notes: nextWaypoint!.notes,
           )
         else
-          Card(
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text('No waypoints within ${maxDistanceKm.toStringAsFixed(1)} km'),
-            ),
+          EmptyStateCard(
+            title: 'No Nearby Waypoints',
+            subtitle: 'No waypoints within ${maxDistanceKm.toStringAsFixed(1)} km',
+            icon: Icons.near_me_disabled,
           ),
         const SizedBox(height: 16),
         if (waterInfo != null)

@@ -69,13 +69,13 @@ void main() {
     testWidgets('content is center aligned', (WidgetTester t) async {
       Widget w = EmptyStateCard(title: 'Title', subtitle: 'Subtitle', icon: Icons.folder_open,);
       await t.pumpWidget(w.withMaterial());
-      t.exists<Column>(null).isCenterAligned();
+      t.oneExists<Column>().isCenterAligned();
     });
 
     testWidgets('card renders as card', (WidgetTester t) async {
       Widget w = EmptyStateCard(title: 'Title', subtitle: 'Subtitle', icon: Icons.folder_open,);
       await t.pumpWidget(w.withMaterial());
-      t.exists<Card>(null);
+      t.anyExist<Card>();
     });
 
   });  // end of group
