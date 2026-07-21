@@ -6,6 +6,7 @@ import 'package:waypoint_alert_app/services/location_service.dart';
 import 'package:waypoint_alert_app/services/settings_service.dart';
 import 'package:waypoint_alert_app/services/waypoint_service.dart';
 import 'package:waypoint_alert_app/widgets/banners/monitoring_banner.dart';
+import 'package:waypoint_alert_app/widgets/bottom_sheets/set_options_bottom_sheet.dart';
 // import 'package:waypoint_alert_app/widgets/cards/active_set_card.dart';
 // import 'package:waypoint_alert_app/widgets/cards/closest_water_card.dart';
 import 'package:waypoint_alert_app/widgets/cards/empty_state_card.dart';
@@ -15,6 +16,7 @@ import 'package:waypoint_alert_app/widgets/cards/upcoming_waypoints_list.dart';
 
 import 'package:waypoint_alert_app/utils/calculators.dart' as calc;
 import 'package:waypoint_alert_app/widgets/cards/waypoint_display_card.dart';
+import 'package:waypoint_alert_app/widgets/drawers/app_drawer.dart';
 
 class HomeScreen extends StatefulWidget {
   final SettingsService settingsService;
@@ -147,14 +149,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: AppDrawer(
+         onImportTap: _onImportTap,
+         onSettingsTap: _onSettingsTap,
+      ),
       appBar: AppBar(
         title: const Text('Waypoint Alert'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () => _showHamburgerMenu(context),
-          ),
-        ],
       ),
       body: Center(
         child: Column(
@@ -175,7 +175,10 @@ class _HomeScreenState extends State<HomeScreen> {
               WaypointDisplayCard(
                 setName: _activeSetName!,
                 waypointCount: _activeSetCount ?? 0,
-                onSetTap: () =>_showHamburgerMenu(context),
+                onSetTap: () => SetOptionsBottomSheet.show(
+                  context,
+                  onManageSetsTap: _onManageSetsTap,
+                ),
                 nextWaypoint: _nextWaypoint,
                 waterInfo: _waterInfo,
                 upcomingWaypoints: _upcomingWaypoints,
@@ -204,32 +207,26 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _showHamburgerMenu(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            leading: const Icon(Icons.folder_open),
-            title: const Text('Manage Waypoint Sets'),
-            onTap: () {
-              Navigator.pop(context);
-              // TODO: Navigate to set management screen
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text('Settings'),
-            onTap: () {
-              Navigator.pop(context);
-              // TODO: Navigate to settings
-            },
-          ),
-          const SizedBox(height: 16),
-        ],
-      ),
+  void _onManageSetsTap() {
+    // TODO: Navigate to set management
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Manage sets coming soon!'))
     );
   }
+
+  void _onImportTap() {
+    // TODO: Navigate to import flow
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Import Feature Coming Soon!'))
+    );
+  }
+
+  void _onSettingsTap() {
+    // TODO: Navigate to settings
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Settings coming soon!'))
+    );
+  }
+
 }
 
