@@ -6,8 +6,8 @@ class HeaderValidator {
     return null;
   }
 
-  Map<String, int>? normalize(List<dynamic> headerRow) {
-    Map<String, int>? result;
+  Map<String, int> normalize(List<dynamic> headerRow) {
+    Map<String, int> result = {};
     return result;
   }
 }

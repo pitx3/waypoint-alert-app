@@ -8,7 +8,7 @@ class RowParser {
 
   Map<String, dynamic>? parse(
         List<dynamic> row,
-        Map<String, int>? headers,
+        Map<String, int> headers,
         int rowNumber,
         List<ParseError> errors,
         List<ParseWarning> warnings,

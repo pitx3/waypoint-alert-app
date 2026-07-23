@@ -37,7 +37,7 @@ class CsvWaypointParser {
         return ParseResult(waypoints, errors, warnings);
       }
 
-      final Map<String, int>? headers = headerValidator.normalize(rows[0]);
+      final Map<String, int> headers = headerValidator.normalize(rows[0]);
 
       // Parse Data Rows
       _RowsParseResult rpr = _parseRows(rows, headers);
@@ -63,7 +63,7 @@ class CsvWaypointParser {
   /// Private helper method to parse the set of rows
   _RowsParseResult _parseRows(
     List<List<dynamic>> rows,
-    Map<String, int>? headers
+    Map<String, int> headers
   ) {
     _RowsParseResult rpr = _RowsParseResult();
     // iterate over the rows and parse them
@@ -79,7 +79,6 @@ class CsvWaypointParser {
        rpr.warnings,
       );
       
-
       if (waypoint != null) {
         rpr.waypoints.add(waypoint);
       }
