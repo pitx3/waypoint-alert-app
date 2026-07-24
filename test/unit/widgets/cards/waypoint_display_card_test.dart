@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:waypoint_alert_app/enums/waypoint_type.dart';
 import 'package:waypoint_alert_app/models/water_info.dart';
 import 'package:waypoint_alert_app/models/waypoint.dart';
 import 'package:waypoint_alert_app/widgets/cards/active_set_card.dart';
@@ -40,7 +41,7 @@ UpcomingWaypoint mockUpcomingWaypoint({
   String name = 'Mock Waypoint',
   double distanceKm = 5.0,
   double bearing = 235.0,
-  String type = 'camp',
+  WaypointType type = WaypointType.camp,
   String? notes,
   int alertCount = 0,
 }) {
@@ -60,7 +61,7 @@ Waypoint mockWaypoint({
   String name = '',
   double latitude = 40.0,
   double longitude = -105.0,
-  String type = '',
+  WaypointType type = WaypointType.unknown,
   List<Alert>? alerts,
 }) {
   Waypoint waypoint = Waypoint(

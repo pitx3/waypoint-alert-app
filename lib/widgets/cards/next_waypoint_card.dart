@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:waypoint_alert_app/enums/waypoint_type.dart';
 
-import 'package:waypoint_alert_app/utils/ui.dart' as ui;
+// import 'package:waypoint_alert_app/utils/ui.dart' as ui;
 
 class NextWaypointCard extends StatelessWidget {
   final String name;
-  final String type;
+  final WaypointType type;
   final double distanceKm;
   final double bearing;
   final String? notes;
@@ -28,7 +29,8 @@ class NextWaypointCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                ui.IconForType(type: type),
+                Icon(type.icon),
+                // ui.IconForType(type: type),
                 const SizedBox(width: 8),
                 const Text(
                   'NEXT WAYPOINT',

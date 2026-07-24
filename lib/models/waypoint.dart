@@ -1,4 +1,7 @@
 import 'package:isar_community/isar.dart';
+import 'package:waypoint_alert_app/enums/alert_priority.dart';
+import 'package:waypoint_alert_app/enums/waypoint_direction.dart';
+import 'package:waypoint_alert_app/enums/waypoint_type.dart';
 
 part 'waypoint.g.dart';
 
@@ -20,10 +23,14 @@ class Waypoint {
   double longitude;
 
   @Index()
-  String type;
+  @Enumerated(EnumType.name)
+  WaypointType type;
+
   String? notes;
-  String? direction;
-  // bool enabled;
+
+  @Enumerated(EnumType.name)
+  WaypointDirection? direction;
+
   List<Alert> alerts;
 
   Waypoint({
@@ -35,8 +42,7 @@ class Waypoint {
     required this.longitude,
     required this.type,
     this.notes,
-    this.direction,
-    // this.enabled = true,
+    WaypointDirection? direction,
     required this.alerts,
   });
 
@@ -47,10 +53,9 @@ class Waypoint {
     String? name,
     double? latitude,
     double? longitude,
-    String? type,
+    WaypointType? type,
     String? notes,
-    String? direction,
-    // bool? enabled,
+    WaypointDirection? direction,
     List<Alert>? alerts,
   }) {
     return Waypoint(
@@ -63,7 +68,6 @@ class Waypoint {
       type: type ?? this.type,
       notes: notes ?? this.notes,
       direction: direction ?? this.direction,
-      // enabled: enabled ?? this.enabled,
       alerts: alerts ?? this.alerts,
     );
   }
@@ -75,10 +79,9 @@ class Waypoint {
     name: json['name'],
     latitude: json['latitude'],
     longitude: json['longitude'],
-    type: json['type'],
+    type: WaypointType.fromString(json['type']) ?? WaypointType.unknown,
     notes: json['notes'],
-    direction: json['direction'],
-    // enabled: json['enabled'] ?? true,
+    direction: WaypointDirection.fromString(json['direction']),
     alerts: (json['alerts'] as List?)
       ?.map((a) => Alert.fromJson(a))
       .toList() ?? [],
@@ -89,15 +92,17 @@ class Waypoint {
 @embedded
 class Alert {
   int distanceMeters;
-  String priority;
+
+  @enumerated
+  AlertPriority priority;
 
   Alert({
     this.distanceMeters = 500,
-    this.priority = 'normal',
+    this.priority = AlertPriority.normal,
   });
 
   factory Alert.fromJson(Map<String, dynamic> json) => Alert(
     distanceMeters: json['distanceMeters'],
-    priority: json['priority'],
+    priority: AlertPriority.fromString(json['priority']) ?? AlertPriority.normal,
   );
 }

@@ -4,8 +4,8 @@ import 'package:waypoint_alert_app/services/csv_parser/csv_waypoint_parser.dart'
 import 'package:waypoint_alert_app/services/csv_parser/models/parse_error.dart';
 import 'package:waypoint_alert_app/services/csv_parser/models/parse_warning.dart';
 
-import '../../helpers/csv_parser_mocks.dart';
-import '../../helpers/csv_parser_unit_test_data.dart' as testdata;
+import '../../../helpers/csv_parser_mocks.dart';
+import '../../../helpers/csv_parser_unit_test_data.dart' as testdata;
 
 void main() {
   late MockHeaderValidator mockHeaderValidator;

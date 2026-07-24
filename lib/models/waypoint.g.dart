@@ -28,6 +28,7 @@ const WaypointSchema = CollectionSchema(
       id: 1,
       name: r'direction',
       type: IsarType.string,
+      enumMap: _WaypointdirectionEnumValueMap,
     ),
     r'latitude': PropertySchema(
       id: 2,
@@ -47,7 +48,12 @@ const WaypointSchema = CollectionSchema(
       name: r'sortOrder',
       type: IsarType.long,
     ),
-    r'type': PropertySchema(id: 8, name: r'type', type: IsarType.string),
+    r'type': PropertySchema(
+      id: 8,
+      name: r'type',
+      type: IsarType.string,
+      enumMap: _WaypointtypeEnumValueMap,
+    ),
   },
 
   estimateSize: _waypointEstimateSize,
@@ -148,7 +154,7 @@ int _waypointEstimateSize(
   {
     final value = object.direction;
     if (value != null) {
-      bytesCount += 3 + value.length * 3;
+      bytesCount += 3 + value.name.length * 3;
     }
   }
   bytesCount += 3 + object.name.length * 3;
@@ -158,7 +164,7 @@ int _waypointEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
-  bytesCount += 3 + object.type.length * 3;
+  bytesCount += 3 + object.type.name.length * 3;
   return bytesCount;
 }
 
@@ -174,14 +180,14 @@ void _waypointSerialize(
     AlertSchema.serialize,
     object.alerts,
   );
-  writer.writeString(offsets[1], object.direction);
+  writer.writeString(offsets[1], object.direction?.name);
   writer.writeDouble(offsets[2], object.latitude);
   writer.writeDouble(offsets[3], object.longitude);
   writer.writeString(offsets[4], object.name);
   writer.writeString(offsets[5], object.notes);
   writer.writeLong(offsets[6], object.setId);
   writer.writeLong(offsets[7], object.sortOrder);
-  writer.writeString(offsets[8], object.type);
+  writer.writeString(offsets[8], object.type.name);
 }
 
 Waypoint _waypointDeserialize(
@@ -199,7 +205,8 @@ Waypoint _waypointDeserialize(
           Alert(),
         ) ??
         [],
-    direction: reader.readStringOrNull(offsets[1]),
+    direction:
+        _WaypointdirectionValueEnumMap[reader.readStringOrNull(offsets[1])],
     id: id,
     latitude: reader.readDouble(offsets[2]),
     longitude: reader.readDouble(offsets[3]),
@@ -207,7 +214,9 @@ Waypoint _waypointDeserialize(
     notes: reader.readStringOrNull(offsets[5]),
     setId: reader.readLong(offsets[6]),
     sortOrder: reader.readLong(offsets[7]),
-    type: reader.readString(offsets[8]),
+    type:
+        _WaypointtypeValueEnumMap[reader.readStringOrNull(offsets[8])] ??
+        WaypointType.unknown,
   );
   return object;
 }
@@ -229,7 +238,8 @@ P _waypointDeserializeProp<P>(
               [])
           as P;
     case 1:
-      return (reader.readStringOrNull(offset)) as P;
+      return (_WaypointdirectionValueEnumMap[reader.readStringOrNull(offset)])
+          as P;
     case 2:
       return (reader.readDouble(offset)) as P;
     case 3:
@@ -243,11 +253,48 @@ P _waypointDeserializeProp<P>(
     case 7:
       return (reader.readLong(offset)) as P;
     case 8:
-      return (reader.readString(offset)) as P;
+      return (_WaypointtypeValueEnumMap[reader.readStringOrNull(offset)] ??
+              WaypointType.unknown)
+          as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
+
+const _WaypointdirectionEnumValueMap = {
+  r'straight': r'straight',
+  r'left': r'left',
+  r'right': r'right',
+  r'slightLeft': r'slightLeft',
+  r'slightRight': r'slightRight',
+  r'hardLeft': r'hardLeft',
+  r'hardRight': r'hardRight',
+  r'uTurn': r'uTurn',
+};
+const _WaypointdirectionValueEnumMap = {
+  r'straight': WaypointDirection.straight,
+  r'left': WaypointDirection.left,
+  r'right': WaypointDirection.right,
+  r'slightLeft': WaypointDirection.slightLeft,
+  r'slightRight': WaypointDirection.slightRight,
+  r'hardLeft': WaypointDirection.hardLeft,
+  r'hardRight': WaypointDirection.hardRight,
+  r'uTurn': WaypointDirection.uTurn,
+};
+const _WaypointtypeEnumValueMap = {
+  r'unknown': r'unknown',
+  r'water': r'water',
+  r'trailhead': r'trailhead',
+  r'camp': r'camp',
+  r'junction': r'junction',
+};
+const _WaypointtypeValueEnumMap = {
+  r'unknown': WaypointType.unknown,
+  r'water': WaypointType.water,
+  r'trailhead': WaypointType.trailhead,
+  r'camp': WaypointType.camp,
+  r'junction': WaypointType.junction,
+};
 
 Id _waypointGetId(Waypoint object) {
   return object.id;
@@ -729,7 +776,9 @@ extension WaypointQueryWhere on QueryBuilder<Waypoint, Waypoint, QWhereClause> {
     });
   }
 
-  QueryBuilder<Waypoint, Waypoint, QAfterWhereClause> typeEqualTo(String type) {
+  QueryBuilder<Waypoint, Waypoint, QAfterWhereClause> typeEqualTo(
+    WaypointType type,
+  ) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IndexWhereClause.equalTo(indexName: r'type', value: [type]),
@@ -738,7 +787,7 @@ extension WaypointQueryWhere on QueryBuilder<Waypoint, Waypoint, QWhereClause> {
   }
 
   QueryBuilder<Waypoint, Waypoint, QAfterWhereClause> typeNotEqualTo(
-    String type,
+    WaypointType type,
   ) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
@@ -854,7 +903,7 @@ extension WaypointQueryFilter
   }
 
   QueryBuilder<Waypoint, Waypoint, QAfterFilterCondition> directionEqualTo(
-    String? value, {
+    WaypointDirection? value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -869,7 +918,7 @@ extension WaypointQueryFilter
   }
 
   QueryBuilder<Waypoint, Waypoint, QAfterFilterCondition> directionGreaterThan(
-    String? value, {
+    WaypointDirection? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -886,7 +935,7 @@ extension WaypointQueryFilter
   }
 
   QueryBuilder<Waypoint, Waypoint, QAfterFilterCondition> directionLessThan(
-    String? value, {
+    WaypointDirection? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -903,8 +952,8 @@ extension WaypointQueryFilter
   }
 
   QueryBuilder<Waypoint, Waypoint, QAfterFilterCondition> directionBetween(
-    String? lower,
-    String? upper, {
+    WaypointDirection? lower,
+    WaypointDirection? upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -1632,7 +1681,7 @@ extension WaypointQueryFilter
   }
 
   QueryBuilder<Waypoint, Waypoint, QAfterFilterCondition> typeEqualTo(
-    String value, {
+    WaypointType value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -1647,7 +1696,7 @@ extension WaypointQueryFilter
   }
 
   QueryBuilder<Waypoint, Waypoint, QAfterFilterCondition> typeGreaterThan(
-    String value, {
+    WaypointType value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -1664,7 +1713,7 @@ extension WaypointQueryFilter
   }
 
   QueryBuilder<Waypoint, Waypoint, QAfterFilterCondition> typeLessThan(
-    String value, {
+    WaypointType value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -1681,8 +1730,8 @@ extension WaypointQueryFilter
   }
 
   QueryBuilder<Waypoint, Waypoint, QAfterFilterCondition> typeBetween(
-    String lower,
-    String upper, {
+    WaypointType lower,
+    WaypointType upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -2074,7 +2123,8 @@ extension WaypointQueryProperty
     });
   }
 
-  QueryBuilder<Waypoint, String?, QQueryOperations> directionProperty() {
+  QueryBuilder<Waypoint, WaypointDirection?, QQueryOperations>
+  directionProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'direction');
     });
@@ -2116,7 +2166,7 @@ extension WaypointQueryProperty
     });
   }
 
-  QueryBuilder<Waypoint, String, QQueryOperations> typeProperty() {
+  QueryBuilder<Waypoint, WaypointType, QQueryOperations> typeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'type');
     });
@@ -2142,7 +2192,8 @@ const AlertSchema = Schema(
     r'priority': PropertySchema(
       id: 1,
       name: r'priority',
-      type: IsarType.string,
+      type: IsarType.byte,
+      enumMap: _AlertpriorityEnumValueMap,
     ),
   },
 
@@ -2158,7 +2209,6 @@ int _alertEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  bytesCount += 3 + object.priority.length * 3;
   return bytesCount;
 }
 
@@ -2169,7 +2219,7 @@ void _alertSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeLong(offsets[0], object.distanceMeters);
-  writer.writeString(offsets[1], object.priority);
+  writer.writeByte(offsets[1], object.priority.index);
 }
 
 Alert _alertDeserialize(
@@ -2180,7 +2230,9 @@ Alert _alertDeserialize(
 ) {
   final object = Alert(
     distanceMeters: reader.readLongOrNull(offsets[0]) ?? 500,
-    priority: reader.readStringOrNull(offsets[1]) ?? 'normal',
+    priority:
+        _AlertpriorityValueEnumMap[reader.readByteOrNull(offsets[1])] ??
+        AlertPriority.normal,
   );
   return object;
 }
@@ -2195,11 +2247,26 @@ P _alertDeserializeProp<P>(
     case 0:
       return (reader.readLongOrNull(offset) ?? 500) as P;
     case 1:
-      return (reader.readStringOrNull(offset) ?? 'normal') as P;
+      return (_AlertpriorityValueEnumMap[reader.readByteOrNull(offset)] ??
+              AlertPriority.normal)
+          as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
+
+const _AlertpriorityEnumValueMap = {
+  'low': 0,
+  'normal': 1,
+  'high': 2,
+  'critical': 3,
+};
+const _AlertpriorityValueEnumMap = {
+  0: AlertPriority.low,
+  1: AlertPriority.normal,
+  2: AlertPriority.high,
+  3: AlertPriority.critical,
+};
 
 extension AlertQueryFilter on QueryBuilder<Alert, Alert, QFilterCondition> {
   QueryBuilder<Alert, Alert, QAfterFilterCondition> distanceMetersEqualTo(
@@ -2262,24 +2329,18 @@ extension AlertQueryFilter on QueryBuilder<Alert, Alert, QFilterCondition> {
   }
 
   QueryBuilder<Alert, Alert, QAfterFilterCondition> priorityEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+    AlertPriority value,
+  ) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'priority',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
+        FilterCondition.equalTo(property: r'priority', value: value),
       );
     });
   }
 
   QueryBuilder<Alert, Alert, QAfterFilterCondition> priorityGreaterThan(
-    String value, {
+    AlertPriority value, {
     bool include = false,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
@@ -2287,16 +2348,14 @@ extension AlertQueryFilter on QueryBuilder<Alert, Alert, QFilterCondition> {
           include: include,
           property: r'priority',
           value: value,
-          caseSensitive: caseSensitive,
         ),
       );
     });
   }
 
   QueryBuilder<Alert, Alert, QAfterFilterCondition> priorityLessThan(
-    String value, {
+    AlertPriority value, {
     bool include = false,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
@@ -2304,18 +2363,16 @@ extension AlertQueryFilter on QueryBuilder<Alert, Alert, QFilterCondition> {
           include: include,
           property: r'priority',
           value: value,
-          caseSensitive: caseSensitive,
         ),
       );
     });
   }
 
   QueryBuilder<Alert, Alert, QAfterFilterCondition> priorityBetween(
-    String lower,
-    String upper, {
+    AlertPriority lower,
+    AlertPriority upper, {
     bool includeLower = true,
     bool includeUpper = true,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
@@ -2325,84 +2382,7 @@ extension AlertQueryFilter on QueryBuilder<Alert, Alert, QFilterCondition> {
           includeLower: includeLower,
           upper: upper,
           includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
         ),
-      );
-    });
-  }
-
-  QueryBuilder<Alert, Alert, QAfterFilterCondition> priorityStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'priority',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<Alert, Alert, QAfterFilterCondition> priorityEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'priority',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<Alert, Alert, QAfterFilterCondition> priorityContains(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'priority',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<Alert, Alert, QAfterFilterCondition> priorityMatches(
-    String pattern, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'priority',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<Alert, Alert, QAfterFilterCondition> priorityIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'priority', value: ''),
-      );
-    });
-  }
-
-  QueryBuilder<Alert, Alert, QAfterFilterCondition> priorityIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'priority', value: ''),
       );
     });
   }

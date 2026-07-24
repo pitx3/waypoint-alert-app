@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_material_design_icons/flutter_material_design_icons.dart';
 
 
-  
+/*
 class IconForType extends StatelessWidget {
   final String type;
 
@@ -16,8 +16,9 @@ class IconForType extends StatelessWidget {
     return Icon(iconData, color: color);
   }
 }
+*/
 
-
+/*
 IconData _getIconForType(String type) {
   switch (type.toLowerCase()) {
     case 'water':
@@ -46,4 +47,5 @@ Color _getColorForType(String type) {
     default:
       return Colors.grey;
   }
-}
+  */
+//}

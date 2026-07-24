@@ -12,7 +12,7 @@
       "alerts": [
         {"distanceMeters": 500, "priority": "normal"},
         {"distanceMeters": 300, "priority": "high"},
-        {"distanceMeters": 100, "priority": "urgent"}
+        {"distanceMeters": 100, "priority": "critical"}
       ]
     },
     {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:waypoint_alert_app/enums/waypoint_type.dart';
 import 'package:waypoint_alert_app/models/water_info.dart';
 import 'package:waypoint_alert_app/models/waypoint.dart';
 import 'package:waypoint_alert_app/widgets/cards/closest_water_card.dart';
@@ -16,7 +17,7 @@ void main() {
         name: '01-033WT',
         latitude: 39.47043,
         longitude: -105.1353,
-        type: 'water',
+        type: WaypointType.water,
         alerts: [],
       );
 
@@ -27,7 +28,7 @@ void main() {
         name: '01-091WT',
         latitude: 39.41959,
         longitude: -105.12433,
-        type: 'water',
+        type: WaypointType.water,
         notes: 'Fill\'r up!',
         alerts: [],
       );

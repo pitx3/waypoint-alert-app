@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:waypoint_alert_app/utils/ui.dart' as ui;
+import 'package:waypoint_alert_app/enums/waypoint_type.dart';
+// import 'package:waypoint_alert_app/utils/ui.dart' as ui;
 
 class UpcomingWaypointsList extends StatelessWidget {
   final List<UpcomingWaypoint> waypoints;
@@ -48,7 +49,7 @@ class _WaypointListTile extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 2),
       child: ListTile(
-        leading: ui.IconForType(type: waypoint.type),
+        leading: Icon(waypoint.type.icon),
         title: Text(
           waypoint.name,
           style: const TextStyle(fontWeight: FontWeight.w500),
@@ -78,7 +79,7 @@ class UpcomingWaypoint {
   final String name;
   final double distanceKm;
   final double bearing;
-  final String type;
+  final WaypointType type;
   final String? notes;
   final int alertCount;
 

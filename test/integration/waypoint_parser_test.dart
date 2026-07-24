@@ -20,13 +20,13 @@ void main() {
       expect(first.name.isNotEmpty, true, reason: 'name should not be empty');
       expect(first.latitude, isNot(equals(0.0)), reason: 'latitude should be valid');
       expect(first.longitude, isNot(equals(0.0)), reason: 'longitide should be valid');
-      expect(first.type.isNotEmpty, true, reason: 'type should not be empty');
+      expect(first.type, isNotNull, reason: 'type should not be empty');
 
       // Test alerts if present
       if (first.alerts.isNotEmpty) {
         final firstAlert = first.alerts.first;
         expect(firstAlert.distanceMeters, greaterThan(0), reason: 'alert distance should be positive');
-        expect(firstAlert.priority.isNotEmpty, true, reason: 'priority should not be empty');
+        expect(firstAlert.priority, isNotNull, reason: 'priority should not be empty');
       }
     });
   });

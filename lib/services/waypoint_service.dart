@@ -1,3 +1,4 @@
+import 'package:waypoint_alert_app/enums/waypoint_type.dart';
 import 'package:waypoint_alert_app/models/water_info.dart';
 import 'package:waypoint_alert_app/models/waypoint.dart';
 import 'package:waypoint_alert_app/services/settings_service.dart';
@@ -191,7 +192,7 @@ class WaypointService {
     final allWaypoints = await repository.getWaypointsForSet(setId);
     
     final waterWaypoints = allWaypoints.where((wp) => 
-      wp.type.toLowerCase() == 'water'
+      wp.type == WaypointType.water
     ).toList();
     
     if (waterWaypoints.isEmpty) return null;
@@ -239,7 +240,7 @@ class WaypointService {
     }
     
     final waterAhead = aheadWaypoints
-      .where((wp) => wp.type.toLowerCase() == 'water')
+      .where((wp) => wp.type == WaypointType.water)
       .toList();
     
     if (waterAhead.isEmpty) return null;

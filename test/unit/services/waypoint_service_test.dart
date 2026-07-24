@@ -4,6 +4,7 @@ import 'dart:math' as math;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:waypoint_alert_app/enums/waypoint_type.dart';
 import 'package:waypoint_alert_app/models/waypoint.dart';
 import 'package:waypoint_alert_app/models/waypoint_set.dart';
 import 'package:waypoint_alert_app/services/settings_service.dart';
@@ -25,38 +26,38 @@ void main() {
 
   // First 32 waypoints from CT segments 01-02 (27+ miles)
   final segment01_02Waypoints = [
-    Waypoint(id: 1, setId: 1, sortOrder: 0, name: '01-000TH', latitude: 39.49127, longitude: -105.09501, type: 'trailhead', alerts: []),
-    Waypoint(id: 3, setId: 1, sortOrder: 1, name: '01-033WT', latitude: 39.47043, longitude: -105.1353, type: 'water', alerts: []),
-    Waypoint(id: 4, setId: 1, sortOrder: 2, name: '01-066XT', latitude: 39.43476, longitude: -105.12306, type: 'crossing', alerts: []),
-    Waypoint(id: 5, setId: 1, sortOrder: 3, name: '01-068OP', latitude: 39.43364, longitude: -105.12059, type: 'other', alerts: []),
-    Waypoint(id: 6, setId: 1, sortOrder: 4, name: '01-070XR', latitude: 39.43065, longitude: -105.11882, type: 'crossing', alerts: []),
-    Waypoint(id: 7, setId: 1, sortOrder: 5, name: '01-071XT', latitude: 39.42876, longitude: -105.11957, type: 'crossing', alerts: []),
-    Waypoint(id: 8, setId: 1, sortOrder: 6, name: '01-082XT', latitude: 39.42407, longitude: -105.12075, type: 'crossing', alerts: []),
-    Waypoint(id: 9, setId: 1, sortOrder: 7, name: '01-083FT', latitude: 39.42404, longitude: -105.12089, type: 'trail', alerts: []),
-    Waypoint(id: 10, setId: 1, sortOrder: 8, name: '01-091WT', latitude: 39.41959, longitude: -105.12433, type: 'water', alerts: []),
-    Waypoint(id: 11, setId: 1, sortOrder: 9, name: '01-099XT', latitude: 39.41334, longitude: -105.12566, type: 'crossing', alerts: []),
-    Waypoint(id: 2, setId: 1, sortOrder: 10, name: '01-100WT', latitude: 39.41021, longitude: -105.13074, type: 'water', alerts: []),
-    Waypoint(id: 12, setId: 1, sortOrder: 11, name: '01-105XT', latitude: 39.40783, longitude: -105.12981, type: 'crossing', alerts: []),
-    Waypoint(id: 13, setId: 1, sortOrder: 12, name: '01-112RT', latitude: 39.4112, longitude: -105.13418, type: 'trail', alerts: []),
-    Waypoint(id: 14, setId: 1, sortOrder: 13, name: '01-131RT', latitude: 39.40581, longitude: -105.15287, type: 'trail', alerts: []),
-    Waypoint(id: 15, setId: 1, sortOrder: 14, name: '01-999XT', latitude: 39.40051, longitude: -105.16767, type: 'crossing', alerts: []),
-    Waypoint(id: 16, setId: 1, sortOrder: 15, name: '02-000TH', latitude: 39.40018, longitude: -105.16831, type: 'trailhead', alerts: []),
-    Waypoint(id: 17, setId: 1, sortOrder: 16, name: '02-001XR', latitude: 39.40021, longitude: -105.16831, type: 'crossing', alerts: []),
-    Waypoint(id: 18, setId: 1, sortOrder: 17, name: '02-020XL', latitude: 39.40021, longitude: -105.18549, type: 'trail', alerts: []),
-    Waypoint(id: 19, setId: 1, sortOrder: 18, name: '02-041XT', latitude: 39.40553, longitude: -105.21392, type: 'crossing', alerts: []),
-    Waypoint(id: 20, setId: 1, sortOrder: 19, name: '02-058XT', latitude: 39.40051, longitude: -105.23238, type: 'crossing', alerts: []),
-    Waypoint(id: 21, setId: 1, sortOrder: 20, name: '02-062XL', latitude: 39.39921, longitude: -105.23433, type: 'trail', alerts: []),
-    Waypoint(id: 22, setId: 1, sortOrder: 21, name: '02-072XT', latitude: 39.38683, longitude: -105.24017, type: 'crossing', alerts: []),
-    Waypoint(id: 23, setId: 1, sortOrder: 22, name: '02-080XT', latitude: 39.37951, longitude: -105.2393, type: 'crossing', alerts: []),
-    Waypoint(id: 24, setId: 1, sortOrder: 23, name: '02-099OP', latitude: 39.35984, longitude: -105.24556, type: 'other', alerts: []),
-    Waypoint(id: 25, setId: 1, sortOrder: 24, name: '02-099WT', latitude: 39.36159, longitude: -105.24496, type: 'water', alerts: []),
-    Waypoint(id: 26, setId: 1, sortOrder: 25, name: '02-099XL', latitude: 39.35984, longitude: -105.24556, type: 'trail', alerts: []),
-    Waypoint(id: 27, setId: 1, sortOrder: 26, name: '02-100XX', latitude: 39.35867, longitude: -105.2457, type: 'crossing', alerts: []),
-    Waypoint(id: 28, setId: 1, sortOrder: 27, name: '02-100XX', latitude: 39.35627, longitude: -105.24644, type: 'crossing', alerts: []),
-    Waypoint(id: 29, setId: 1, sortOrder: 28, name: '02-102XT', latitude: 39.35627, longitude: -105.24644, type: 'crossing', alerts: []),
-    Waypoint(id: 30, setId: 1, sortOrder: 29, name: '02-105XL', latitude: 39.35678, longitude: -105.25073, type: 'trail', alerts: []),
-    Waypoint(id: 31, setId: 1, sortOrder: 30, name: '02-106MS', latitude: 39.3561, longitude: -105.25136, type: 'trail', alerts: []),
-    Waypoint(id: 32, setId: 1, sortOrder: 31, name: '02-115TH', latitude: 39.34585, longitude: -105.257, type: 'trailhead', alerts: []),
+    Waypoint(id: 1, setId: 1, sortOrder: 0, name: '01-000TH', latitude: 39.49127, longitude: -105.09501, type: WaypointType.trailhead, alerts: []),
+    Waypoint(id: 3, setId: 1, sortOrder: 1, name: '01-033WT', latitude: 39.47043, longitude: -105.1353, type: WaypointType.water, alerts: []),
+    Waypoint(id: 4, setId: 1, sortOrder: 2, name: '01-066XT', latitude: 39.43476, longitude: -105.12306, type: WaypointType.junction, alerts: []),
+    Waypoint(id: 5, setId: 1, sortOrder: 3, name: '01-068OP', latitude: 39.43364, longitude: -105.12059, type: WaypointType.trailhead, alerts: []),
+    Waypoint(id: 6, setId: 1, sortOrder: 4, name: '01-070XR', latitude: 39.43065, longitude: -105.11882, type: WaypointType.junction, alerts: []),
+    Waypoint(id: 7, setId: 1, sortOrder: 5, name: '01-071XT', latitude: 39.42876, longitude: -105.11957, type: WaypointType.junction, alerts: []),
+    Waypoint(id: 8, setId: 1, sortOrder: 6, name: '01-082XT', latitude: 39.42407, longitude: -105.12075, type: WaypointType.junction, alerts: []),
+    Waypoint(id: 9, setId: 1, sortOrder: 7, name: '01-083FT', latitude: 39.42404, longitude: -105.12089, type: WaypointType.junction, alerts: []),
+    Waypoint(id: 10, setId: 1, sortOrder: 8, name: '01-091WT', latitude: 39.41959, longitude: -105.12433, type: WaypointType.water, alerts: []),
+    Waypoint(id: 11, setId: 1, sortOrder: 9, name: '01-099XT', latitude: 39.41334, longitude: -105.12566, type: WaypointType.junction, alerts: []),
+    Waypoint(id: 2, setId: 1, sortOrder: 10, name: '01-100WT', latitude: 39.41021, longitude: -105.13074, type: WaypointType.water, alerts: []),
+    Waypoint(id: 12, setId: 1, sortOrder: 11, name: '01-105XT', latitude: 39.40783, longitude: -105.12981, type: WaypointType.junction, alerts: []),
+    Waypoint(id: 13, setId: 1, sortOrder: 12, name: '01-112RT', latitude: 39.4112, longitude: -105.13418, type: WaypointType.junction, alerts: []),
+    Waypoint(id: 14, setId: 1, sortOrder: 13, name: '01-131RT', latitude: 39.40581, longitude: -105.15287, type: WaypointType.junction, alerts: []),
+    Waypoint(id: 15, setId: 1, sortOrder: 14, name: '01-999XT', latitude: 39.40051, longitude: -105.16767, type: WaypointType.junction, alerts: []),
+    Waypoint(id: 16, setId: 1, sortOrder: 15, name: '02-000TH', latitude: 39.40018, longitude: -105.16831, type: WaypointType.trailhead, alerts: []),
+    Waypoint(id: 17, setId: 1, sortOrder: 16, name: '02-001XR', latitude: 39.40021, longitude: -105.16831, type: WaypointType.junction, alerts: []),
+    Waypoint(id: 18, setId: 1, sortOrder: 17, name: '02-020XL', latitude: 39.40021, longitude: -105.18549, type: WaypointType.junction, alerts: []),
+    Waypoint(id: 19, setId: 1, sortOrder: 18, name: '02-041XT', latitude: 39.40553, longitude: -105.21392, type: WaypointType.junction, alerts: []),
+    Waypoint(id: 20, setId: 1, sortOrder: 19, name: '02-058XT', latitude: 39.40051, longitude: -105.23238, type: WaypointType.junction, alerts: []),
+    Waypoint(id: 21, setId: 1, sortOrder: 20, name: '02-062XL', latitude: 39.39921, longitude: -105.23433, type: WaypointType.junction, alerts: []),
+    Waypoint(id: 22, setId: 1, sortOrder: 21, name: '02-072XT', latitude: 39.38683, longitude: -105.24017, type: WaypointType.junction, alerts: []),
+    Waypoint(id: 23, setId: 1, sortOrder: 22, name: '02-080XT', latitude: 39.37951, longitude: -105.2393, type: WaypointType.junction, alerts: []),
+    Waypoint(id: 24, setId: 1, sortOrder: 23, name: '02-099OP', latitude: 39.35984, longitude: -105.24556, type: WaypointType.trailhead, alerts: []),
+    Waypoint(id: 25, setId: 1, sortOrder: 24, name: '02-099WT', latitude: 39.36159, longitude: -105.24496, type: WaypointType.water, alerts: []),
+    Waypoint(id: 26, setId: 1, sortOrder: 25, name: '02-099XL', latitude: 39.35984, longitude: -105.24556, type: WaypointType.junction, alerts: []),
+    Waypoint(id: 27, setId: 1, sortOrder: 26, name: '02-100XX', latitude: 39.35867, longitude: -105.2457, type: WaypointType.junction, alerts: []),
+    Waypoint(id: 28, setId: 1, sortOrder: 27, name: '02-100XX', latitude: 39.35627, longitude: -105.24644, type: WaypointType.junction, alerts: []),
+    Waypoint(id: 29, setId: 1, sortOrder: 28, name: '02-102XT', latitude: 39.35627, longitude: -105.24644, type: WaypointType.junction, alerts: []),
+    Waypoint(id: 30, setId: 1, sortOrder: 29, name: '02-105XL', latitude: 39.35678, longitude: -105.25073, type: WaypointType.junction, alerts: []),
+    Waypoint(id: 31, setId: 1, sortOrder: 30, name: '02-106MS', latitude: 39.3561, longitude: -105.25136, type: WaypointType.junction, alerts: []),
+    Waypoint(id: 32, setId: 1, sortOrder: 31, name: '02-115TH', latitude: 39.34585, longitude: -105.257, type: WaypointType.trailhead, alerts: []),
   ];
 
 
@@ -76,9 +77,9 @@ void main() {
       final currentLon = -105.0;
 
       final waypoints = [
-        Waypoint(id: 1, setId: 1, sortOrder: 0, name: 'Far', latitude: 39.1, longitude: -105.1, type: 'trail', alerts: []),
-        Waypoint(id: 2, setId: 1, sortOrder: 1, name: 'Close', latitude: 39.01, longitude: -105.01, type: 'trail', alerts: []),
-        Waypoint(id: 3, setId: 1, sortOrder: 2, name: 'Medium', latitude: 39.05, longitude: -105.05, type: 'water', alerts: []),
+        Waypoint(id: 1, setId: 1, sortOrder: 0, name: 'Far', latitude: 39.1, longitude: -105.1, type: WaypointType.junction, alerts: []),
+        Waypoint(id: 2, setId: 1, sortOrder: 1, name: 'Close', latitude: 39.01, longitude: -105.01, type: WaypointType.junction, alerts: []),
+        Waypoint(id: 3, setId: 1, sortOrder: 2, name: 'Medium', latitude: 39.05, longitude: -105.05, type: WaypointType.water, alerts: []),
       ];
 
       when(() => mockRepository.getWaypointsForSet(1)).thenAnswer((_) async => waypoints);
@@ -104,9 +105,9 @@ void main() {
       final currentLon = -105.0;
 
       final waypoints = [
-        Waypoint(id: 1, setId: 1, sortOrder: 0, name: 'Trail1', latitude: 39.0, longitude: -105.0, type: 'trail', alerts: []),
-        Waypoint(id: 2, setId: 1, sortOrder: 1, name: 'Water1', latitude: 39.01, longitude: -105.01, type: 'water', alerts: []),
-        Waypoint(id: 3, setId: 1, sortOrder: 2, name: 'Water2', latitude: 39.05, longitude: -105.05, type: 'water', alerts: []),
+        Waypoint(id: 1, setId: 1, sortOrder: 0, name: 'Trail1', latitude: 39.0, longitude: -105.0, type: WaypointType.junction, alerts: []),
+        Waypoint(id: 2, setId: 1, sortOrder: 1, name: 'Water1', latitude: 39.01, longitude: -105.01, type: WaypointType.water, alerts: []),
+        Waypoint(id: 3, setId: 1, sortOrder: 2, name: 'Water2', latitude: 39.05, longitude: -105.05, type: WaypointType.water, alerts: []),
       ];
 
       when(() => mockRepository.getWaypointsForSet(1)).thenAnswer((_) async => waypoints);
@@ -115,13 +116,13 @@ void main() {
 
       expect(result, isNotNull);
       expect(result!.name, equals('Water1'));
-      expect(result.type, equals('water'));
+      expect(result.type, equals(WaypointType.water));
     });
 
     test('returns null if no water waypoints exist', () async {
       final waypoints = [
-        Waypoint(id: 1, setId: 1, sortOrder: 0, name: 'Trail1', latitude: 39.0, longitude: -105.0, type: 'trail', alerts: []),
-        Waypoint(id: 2, setId: 1, sortOrder: 1, name: 'Trail2', latitude: 39.1, longitude: -105.1, type: 'junction', alerts: []),
+        Waypoint(id: 1, setId: 1, sortOrder: 0, name: 'Trail1', latitude: 39.0, longitude: -105.0, type: WaypointType.junction, alerts: []),
+        Waypoint(id: 2, setId: 1, sortOrder: 1, name: 'Trail2', latitude: 39.1, longitude: -105.1, type: WaypointType.junction, alerts: []),
       ];
 
       when(() => mockRepository.getWaypointsForSet(1)).thenAnswer((_) async => waypoints);
@@ -263,8 +264,8 @@ void main() {
   group('deleteSet', () {
     test('deletes all waypoints in the set, then the set itself', () async {
       final waypoints = [
-        Waypoint(id: 10, setId: 5, sortOrder: 0, name: 'WP1', latitude: 39.0, longitude: -105.0, type: 'trail', alerts: []),
-        Waypoint(id: 11, setId: 5, sortOrder: 1, name: 'WP2', latitude: 39.1, longitude: -105.1, type: 'water', alerts: []),
+        Waypoint(id: 10, setId: 5, sortOrder: 0, name: 'WP1', latitude: 39.0, longitude: -105.0, type: WaypointType.junction, alerts: []),
+        Waypoint(id: 11, setId: 5, sortOrder: 1, name: 'WP2', latitude: 39.1, longitude: -105.1, type: WaypointType.water, alerts: []),
       ];
 
       when(() => mockRepository.getWaypointsForSet(5)).thenAnswer((_) async => waypoints);
@@ -301,16 +302,16 @@ void main() {
   group('getNextWaypoint with real CT data pattern', () {
     // First 10 waypoints from segment 01, scaled for testing
     final testWaypoints = [
-      Waypoint(id: 1, setId: 1, sortOrder: 0, name: '01-000TH', latitude: 39.49127, longitude: -105.09501, type: 'trailhead', alerts: []),
-      Waypoint(id: 2, setId: 1, sortOrder: 1, name: '01-010WT', latitude: 39.41021, longitude: -105.13074, type: 'water', alerts: []),
-      Waypoint(id: 3, setId: 1, sortOrder: 2, name: '01-033WT', latitude: 39.47043, longitude: -105.1353, type: 'water', alerts: []),
-      Waypoint(id: 4, setId: 1, sortOrder: 3, name: '01-066XT', latitude: 39.43476, longitude: -105.12306, type: 'crossing', alerts: []),
-      Waypoint(id: 5, setId: 1, sortOrder: 4, name: '01-068OP', latitude: 39.43364, longitude: -105.12059, type: 'other', alerts: []),
-      Waypoint(id: 6, setId: 1, sortOrder: 5, name: '01-070XR', latitude: 39.43065, longitude: -105.11882, type: 'crossing', alerts: []),
-      Waypoint(id: 7, setId: 1, sortOrder: 6, name: '01-071XT', latitude: 39.42876, longitude: -105.11957, type: 'crossing', alerts: []),
-      Waypoint(id: 8, setId: 1, sortOrder: 7, name: '01-082XT', latitude: 39.42407, longitude: -105.12075, type: 'crossing', alerts: []),
-      Waypoint(id: 9, setId: 1, sortOrder: 8, name: '01-083FT', latitude: 39.42404, longitude: -105.12089, type: 'trail', alerts: []),
-      Waypoint(id: 10, setId: 1, sortOrder: 9, name: '01-091WT', latitude: 39.41959, longitude: -105.12433, type: 'water', alerts: []),
+      Waypoint(id: 1, setId: 1, sortOrder: 0, name: '01-000TH', latitude: 39.49127, longitude: -105.09501, type: WaypointType.trailhead, alerts: []),
+      Waypoint(id: 2, setId: 1, sortOrder: 1, name: '01-010WT', latitude: 39.41021, longitude: -105.13074, type: WaypointType.water, alerts: []),
+      Waypoint(id: 3, setId: 1, sortOrder: 2, name: '01-033WT', latitude: 39.47043, longitude: -105.1353, type: WaypointType.water, alerts: []),
+      Waypoint(id: 4, setId: 1, sortOrder: 3, name: '01-066XT', latitude: 39.43476, longitude: -105.12306, type: WaypointType.junction, alerts: []),
+      Waypoint(id: 5, setId: 1, sortOrder: 4, name: '01-068OP', latitude: 39.43364, longitude: -105.12059, type: WaypointType.trailhead, alerts: []),
+      Waypoint(id: 6, setId: 1, sortOrder: 5, name: '01-070XR', latitude: 39.43065, longitude: -105.11882, type: WaypointType.junction, alerts: []),
+      Waypoint(id: 7, setId: 1, sortOrder: 6, name: '01-071XT', latitude: 39.42876, longitude: -105.11957, type: WaypointType.junction, alerts: []),
+      Waypoint(id: 8, setId: 1, sortOrder: 7, name: '01-082XT', latitude: 39.42407, longitude: -105.12075, type: WaypointType.junction, alerts: []),
+      Waypoint(id: 9, setId: 1, sortOrder: 8, name: '01-083FT', latitude: 39.42404, longitude: -105.12089, type: WaypointType.junction, alerts: []),
+      Waypoint(id: 10, setId: 1, sortOrder: 9, name: '01-091WT', latitude: 39.41959, longitude: -105.12433, type: WaypointType.water, alerts: []),
     ];
 
     test('returns closest waypoint when positioned between waypoints', () async {
@@ -404,9 +405,9 @@ void main() {
     test('sorts by trail order (sortOrder) correctly across segments', () async {
       // Test segment boundary: 01-999 → 02-000
       final segmentBoundaryWaypoints = [
-        Waypoint(id: 1, setId: 1, sortOrder: 0, name: '01-999XT', latitude: 39.50000, longitude: -105.10000, type: 'crossing', alerts: []),
-        Waypoint(id: 2, setId: 1, sortOrder: 1, name: '02-000TH', latitude: 39.50100, longitude: -105.10100, type: 'trailhead', alerts: []),
-        Waypoint(id: 3, setId: 1, sortOrder: 2, name: '02-010WT', latitude: 39.50200, longitude: -105.10200, type: 'water', alerts: []),
+        Waypoint(id: 1, setId: 1, sortOrder: 0, name: '01-999XT', latitude: 39.50000, longitude: -105.10000, type: WaypointType.junction, alerts: []),
+        Waypoint(id: 2, setId: 1, sortOrder: 1, name: '02-000TH', latitude: 39.50100, longitude: -105.10100, type: WaypointType.trailhead, alerts: []),
+        Waypoint(id: 3, setId: 1, sortOrder: 2, name: '02-010WT', latitude: 39.50200, longitude: -105.10200, type: WaypointType.water, alerts: []),
       ];
 
       // Verify the sort order
@@ -623,7 +624,7 @@ void main() {
     test('bearing is 90 degrees (due east) when waypoint is directly east', () async {
       // tests the "x=0" edge case indirectly
       final testWaypoints = [
-        Waypoint(id: 1, setId: 90, sortOrder: 1, name: 'TEST-WATER', latitude: 39.45, longitude: -105.12, type: 'water', alerts: []),
+        Waypoint(id: 1, setId: 90, sortOrder: 1, name: 'TEST-WATER', latitude: 39.45, longitude: -105.12, type: WaypointType.water, alerts: []),
       ];
 
       when(() => mockRepository.getWaypointsForSet(90))
@@ -639,7 +640,7 @@ void main() {
     test('bearing is 270 degrees (due west) when waypoint is directly west', () async {
       // tests the "x=0" edge case indirectly
       final testWaypoints = [
-        Waypoint(id: 1, setId: 90, sortOrder: 1, name: 'TEST-WATER', latitude: 39.45, longitude: -105.12, type: 'water', alerts: []),
+        Waypoint(id: 1, setId: 90, sortOrder: 1, name: 'TEST-WATER', latitude: 39.45, longitude: -105.12, type: WaypointType.water, alerts: []),
       ];
 
       when(() => mockRepository.getWaypointsForSet(90))
