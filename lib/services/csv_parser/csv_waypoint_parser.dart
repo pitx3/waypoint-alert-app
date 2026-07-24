@@ -1,5 +1,4 @@
 import 'package:csv/csv.dart';
-import 'package:waypoint_alert_app/services/csv_parser/duplicate_detector.dart';
 import 'package:waypoint_alert_app/services/csv_parser/header_validator.dart';
 import 'package:waypoint_alert_app/services/csv_parser/models/parse_error.dart';
 import 'package:waypoint_alert_app/services/csv_parser/models/parse_result.dart';
@@ -9,12 +8,12 @@ import 'package:waypoint_alert_app/services/csv_parser/row_parser.dart';
 class CsvWaypointParser {
   final HeaderValidator headerValidator;
   final RowParser rowParser;
-  final DuplicateDetector duplicateDetector;
+
+  // bool _sortOrderMismatch = false;
 
   CsvWaypointParser({
     required this.headerValidator,
     required this.rowParser,
-    required this.duplicateDetector,
   });
 
   ParseResult parse(String csvContent) {
@@ -40,17 +39,13 @@ class CsvWaypointParser {
       final Map<String, int> headers = headerValidator.normalize(rows[0]);
 
       // Parse Data Rows
-      _RowsParseResult rpr = _parseRows(rows, headers);
+      _RowsParseResult rpr = _parseRows(rows, headers, errors, warnings);
       errors.addAll(rpr.errors);
       warnings.addAll(rpr.warnings);
-      if (rpr.sortOrderMismatch) {
-        return ParseResult(waypoints, errors, warnings);
-      }
+      // if (rpr.sortOrderMismatch) {
+      //   return ParseResult(waypoints, errors, warnings);
+      // }
       waypoints.addAll(rpr.waypoints);
-
-      if (errors.isEmpty) {
-        duplicateDetector.detect(waypoints, warnings);
-      }
 
     } catch (e) {
       errors.add(ParseError(0, 'Failed to parse CSV: ${e.toString()}'));
@@ -63,13 +58,20 @@ class CsvWaypointParser {
   /// Private helper method to parse the set of rows
   _RowsParseResult _parseRows(
     List<List<dynamic>> rows,
-    Map<String, int> headers
+    Map<String, int> headers,
+    List<ParseError> errors,
+    List<ParseWarning> warnings,
   ) {
+    bool? hasSortOrder;
+    final Map<int, int> seenSortOrders = {};
+    final Map<String, int> seenWaypoints = {};
+
     _RowsParseResult rpr = _RowsParseResult();
     // iterate over the rows and parse them
     for (var i = 1; i < rows.length; i++) {
       final row = rows[i];
       final rowNumber = i + 1; // this is correct!
+      int? sortOrder;
 
       final waypoint = rowParser.parse(
        row,
@@ -81,13 +83,40 @@ class CsvWaypointParser {
       
       if (waypoint != null) {
         rpr.waypoints.add(waypoint);
+        sortOrder = waypoint['sortorder'] as int?;
+        hasSortOrder ??= (sortOrder != null);
+
+        // Duplicate waypoint check
+        final key = '${waypoint['latitude']}:${waypoint['longitude']}:${waypoint['type']}';
+        if (seenWaypoints.containsKey(key)) {
+          warnings.add(ParseWarning(
+            rowNumber,
+            'Duplicate waypoint (same lat,long,type)',
+            [seenWaypoints[key]!, rowNumber]
+          ));
+        } else {
+          seenWaypoints[key] = rowNumber; 
+        }
       }
 
-      if (rowParser.sortOrderMismatch) {
+      // sort order mismatch check
+      if (hasSortOrder! == (sortOrder == null)) {
         rpr.errors.add(ParseError(
-          0, 'Mixed sortOrder: some rows have values, others are empty'
+          0, 'Mixed sort order: some rows have values, others are empty'
         ));
         return rpr;
+      }
+
+      // duplicate sort order check
+      if (sortOrder != null) {
+        if (seenSortOrders.containsKey(sortOrder)) {
+          errors.add(ParseError(
+            rowNumber,
+            'Duplicate sortOrder value: $sortOrder (first seen in row ${seenSortOrders[sortOrder]})',
+          ));
+        } else {
+          seenSortOrders[sortOrder] = rowNumber;
+        }
       }
     }
 

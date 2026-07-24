@@ -10,14 +10,25 @@ Map<String, int> get validHeaders => {
     'type': 3,
   };
 
+Map<String, int> get headersWithSortOrder {
+  final headers = {...validHeaders, 'sortorder': 4};
+  return headers;
+}
+
 Map<String, dynamic> defaultWaypoint() {
     return customWaypoint();
   }
 
   ///
 Map<String, dynamic> customWaypoint({
-    String? name, double? latitude, double? longitude, String? type, 
-    double latOffset = 0.0, double lonOffset = 0.0}) {
+    String? name, 
+    double? latitude, 
+    double? longitude, 
+    String? type, 
+    double latOffset = 0.0, 
+    double lonOffset = 0.0,
+    int? sortOrder,
+    }) {
 
     latitude = (latitude ?? defaultLat) + latOffset;
     longitude = (longitude ?? defaultLon) + lonOffset;
@@ -27,6 +38,7 @@ Map<String, dynamic> customWaypoint({
       'latitude': latitude,
       'longitude': longitude,
       'type': type ?? defaultType,
+      'sortorder': sortOrder,
     };
   }
 
@@ -47,6 +59,26 @@ List<Map<String, dynamic>> fourWaypoints() => [
     junctionWaypoint(),
     campWaypoint(),
   ];
+
+
+String generateCsv({
+  required int rows,
+  List<String>? addColumns,
+}) {
+  final defaultCols = ['name', 'latitude', 'longitude', 'type'];
+  List<String> cols = defaultCols;
+  if (addColumns != null) {
+    cols.addAll(addColumns);
+  }
+
+  final header = cols.join(',');
+  final dataRows = List.generate(
+    rows,
+    (i) => cols.map((c) => 'value_$i').join(','),
+  );
+  return [header, ...dataRows].join('\n');
+}
+
 
 String get validCsvContent => '''name,latitude,longitude,type
   Water Source,35.0,-120.0,water

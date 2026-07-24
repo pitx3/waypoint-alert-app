@@ -1,6 +1,5 @@
 import 'dart:collection';
 
-import 'package:waypoint_alert_app/services/csv_parser/duplicate_detector.dart';
 import 'package:waypoint_alert_app/services/csv_parser/header_validator.dart';
 import 'package:waypoint_alert_app/services/csv_parser/models/parse_error.dart';
 import 'package:waypoint_alert_app/services/csv_parser/models/parse_warning.dart';
@@ -63,24 +62,5 @@ class MockRowParser implements RowParser {
       return _returnValues.removeFirst();
     }
     return null;
-  }
-}
-
-/// MockDuplicateDetector
-/// add warnings as you see fit
-/// Check wasCalled to ensure it was properly called
-/// use detect(warnings) as an "out" value for further validation
-class MockDuplicateDetector implements DuplicateDetector {
-  bool _wasCalled = false;
-  final List<ParseWarning> _warningsToAdd = [];
-
-  void shouldAddWarnings(List<ParseWarning> warnings) => _warningsToAdd.addAll(warnings);
-
-  bool get wasCalled => _wasCalled;
-
-  @override
-  void detect(List<Map<String, dynamic>> waypoints, List<ParseWarning> warnings) {
-    _wasCalled = true;
-    warnings.addAll(_warningsToAdd);
   }
 }
