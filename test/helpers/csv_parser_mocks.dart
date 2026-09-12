@@ -40,7 +40,6 @@ class MockRowParser implements RowParser {
 
   int get callCount => _callCount;
 
-  @override
   bool sortOrderMismatch = false;
 
   @override

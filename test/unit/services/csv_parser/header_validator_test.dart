@@ -27,6 +27,8 @@ void main() {
       expect(result!.message, contains('type'));
     });
 
+    // TODO: additional tests for other required columns
+
     test('is case-insensitive', () {
       final headers = ['NAME', 'Latitude', 'lOnGitude', 'TypE'];
 
@@ -65,6 +67,17 @@ void main() {
       expect(result['latitude'], 1);
       expect(result['longitude'], 2);
       expect(result['type'], 3);
+    });
+
+    test('column order doesn\'t matter', (){
+      final headers = ['type', 'name', 'longitude', 'latitude'];
+
+      final result = validator.normalize(headers);
+
+      expect(result['name'], 1);
+      expect(result['latitude'], 3);
+      expect(result['longitude'], 2);
+      expect(result['type'], 0);
     });
 
     test('converts headers to lowercase', () {

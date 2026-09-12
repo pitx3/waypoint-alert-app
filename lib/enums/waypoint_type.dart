@@ -5,6 +5,7 @@ import 'package:flutter_material_design_icons/flutter_material_design_icons.dart
 //
 enum WaypointType {
   unknown,
+  none,
   water,
   trailhead,
   camp,
@@ -13,6 +14,7 @@ enum WaypointType {
   String get displayName{
     switch (this) {
       case WaypointType.unknown: return 'Unknown';
+      case WaypointType.none: return 'None';
       case WaypointType.water: return 'Water';
       case WaypointType.trailhead: return 'Trailhead';
       case WaypointType.camp: return 'Camp';
@@ -23,6 +25,7 @@ enum WaypointType {
   IconData get icon {
     switch (this) {
       case WaypointType.unknown: return Icons.help_outline;
+      case WaypointType.none: return Icons.place;
       case WaypointType.water: return Icons.water_drop;
       case WaypointType.trailhead: return Icons.hiking;
       case WaypointType.camp: return MdiIcons.tent;
@@ -33,6 +36,7 @@ enum WaypointType {
   Color get color {
     switch (this) {
       case WaypointType.unknown: return Colors.grey;
+      case WaypointType.none: return Colors.blueGrey;
       case WaypointType.water: return Colors.lightBlue;
       case WaypointType.trailhead: return Colors.green;
       case WaypointType.camp: return Colors.orange;
