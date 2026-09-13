@@ -16,7 +16,7 @@ void main() {
     parser = RowParser();
     errors = [];
     warnings = [];
-    headers = testdata.validHeaders;
+    headers = testdata.requiredHeaders;
   });
 
   group('parse() - required fields', () {
@@ -380,6 +380,128 @@ void main() {
       expect(warnings.first.message, contains('type'));
       expect(warnings.first.message, contains('"Unknown"'));
       expect(warnings.first.message, contains('"spaceport"'));
+    });
+  });
+
+  group('parse() - sortOrder field validation', () {
+    test('parses valid sortOrder', () {
+      final headers = {
+        'sortorder': 0,
+        'name': 1,
+        'latitude': 2,
+        'longitude': 3,
+        'type': 4,
+      };
+      final row = ['5', 'Trailhead', '35.0', '-120.0', 'trailhead'];
+
+      final result = parser.parse(row, headers, 1, errors, warnings);
+
+      expect(result, isNotNull);
+      expect(result!['sortOrder'], 5);
+      expect(errors, isEmpty);
+    });
+
+    test('returns error when sortOrder value is missing but header exists', () {
+      final headers = {
+        'name': 0,
+        'latitude': 1,
+        'longitude': 2,
+        'type': 3,
+        'sortorder': 4,
+      };
+      final row = ['Trailhead', '35.0', '-120.0', 'trailhead'];
+
+      final result = parser.parse(row, headers, 1, errors, warnings);
+
+      expect(result, isNull);
+      expect(errors.length, 1);
+      expect(errors.first.message, contains('sortOrder'));
+    });
+
+    test('returns error when sortOrder is non-numeric', () {
+      final headers = {
+        'sortorder': 0,
+        'name': 1,
+        'latitude': 2,
+        'longitude': 3,
+        'type': 4,
+      };
+      final row = ['abc', 'Trailhead', '35.0', '-120.0', 'trailhead'];
+
+      final result = parser.parse(row, headers, 1, errors, warnings);
+
+      expect(result, isNull);
+      expect(errors.length, 1);
+      expect(errors.first.message, contains('sortOrder'));
+      expect(errors.first.message, contains('"abc"'));
+    });
+
+    test('returns error when sortOrder is not an integer', () {
+      final headers = {
+        'sortorder': 0,
+        'name': 1,
+        'latitude': 2,
+        'longitude': 3,
+        'type': 4,
+      };
+      final row = ['294.5', 'Trailhead', '35.0', '-120.0', 'trailhead'];
+
+      final result = parser.parse(row, headers, 1, errors, warnings);
+
+      expect(result, isNull);
+      expect(errors.length, 1);
+      expect(errors.first.message, contains('sortOrder'));
+      expect(errors.first.message, contains('"294.5"'));
+    });
+
+    test('does not add sortOrder when column is not in headers', () {
+      final row = [
+        'Trailhead',
+        '35.0',
+        '-120.0',
+        'trailhead',
+        '5',
+      ]; // extra value at end!
+
+      final result = parser.parse(row, headers, 1, errors, warnings);
+
+      expect(result, isNotNull);
+      expect(result!.containsKey('sortOrder'), isFalse);
+      expect(errors, isEmpty);
+    });
+
+    test('parses sortOrder of zero successfully', () {
+      final headers = {
+        'sortorder': 0,
+        'name': 1,
+        'latitude': 2,
+        'longitude': 3,
+        'type': 4,
+      };
+      final row = ['0', 'Trailhead', '35.0', '-120.0', 'trailhead'];
+
+      final result = parser.parse(row, headers, 1, errors, warnings);
+
+      expect(result, isNotNull);
+      expect(result!['sortOrder'], 0);
+      expect(errors, isEmpty);
+    });
+
+    test('parses negative sortOrder successfully', () {
+      final headers = {
+        'sortorder': 0,
+        'name': 1,
+        'latitude': 2,
+        'longitude': 3,
+        'type': 4,
+      };
+      final row = ['-5', 'Trailhead', '35.0', '-120.0', 'trailhead'];
+
+      final result = parser.parse(row, headers, 1, errors, warnings);
+
+      expect(result, isNotNull);
+      expect(result!['sortOrder'], -5);
+      expect(errors, isEmpty);
     });
   });
 }

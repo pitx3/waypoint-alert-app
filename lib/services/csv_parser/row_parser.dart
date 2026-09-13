@@ -34,7 +34,7 @@ class RowParser {
         errors.add(
           ParseError(
             rowNumber,
-            'Invalid longitude "$latString" (must be a number between -90 and 90)',
+            'Invalid latitude "$latString" (must be a number between -90 and 90)',
           ),
         );
         hasErrors = true;
@@ -91,6 +91,27 @@ class RowParser {
       waypoint['type'] = finalType;
     }
 
+    // SortOrder
+    final sortOrderIndex = headers['sortorder'];
+    if (sortOrderIndex != null) {
+      if (sortOrderIndex >= row.length) {
+        errors.add(ParseError(rowNumber, 'Missing data for colum "sortOrder"'));
+        hasErrors = true;
+      } else {
+        final sortOrderString = row[sortOrderIndex].toString().trim();
+        final sortOrderValue = int.tryParse(sortOrderString);
+        if (sortOrderValue == null && sortOrderString.isNotEmpty) {
+          errors.add(
+            ParseError(rowNumber, 'Invalid sortOrder value "$sortOrderString"'),
+          );
+          hasErrors = true;
+        } else {
+          waypoint['sortOrder'] = sortOrderValue;
+        }
+      }
+    }
+
+    // Return either null or complete waypoint map
     return hasErrors ? null : waypoint;
   }
 }

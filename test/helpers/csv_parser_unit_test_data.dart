@@ -3,6 +3,8 @@ double defaultLat = 40.0;
 double defaultLon = -105.0;
 String defaultName = 'Waypoint';
 
+Map<String, int> get requiredHeaders => validHeaders;
+
 Map<String, int> get validHeaders => {
     'name': 0,
     'latitude': 1,
